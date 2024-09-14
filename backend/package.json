@@ -6,6 +6,7 @@
       "build": "npx tsc",
       "start": "node build/index.js",
       "dev": "nodemon src/index.ts",
+      "dev:nr": "ts-node src/index.ts",
       "test": "npx tsc"
     },
     "keywords": [
