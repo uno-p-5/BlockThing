@@ -1,13 +1,32 @@
+import { MouseEvent } from "react";
+
 import { cn } from "@/lib/utils";
+import { PencilIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+
 import { Doc } from "../../../convex/_generated/dataModel";
+import { Button } from "../ui/button";
 
 interface GameCardProps {
   game: Doc<"project">;
 }
 
 export function GameCard({ game }: GameCardProps) {
+  const handleEdit = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    console.log("edit!");
+  };
+
+  const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    console.log("delete!");
+  };
+
   return (
     <Link
       href={`/editor/${game?._id}`}
@@ -31,16 +50,39 @@ export function GameCard({ game }: GameCardProps) {
 
         <div
           className={cn(
-            "absolute bottom-0 mt-auto flex h-20 w-full flex-col items-center justify-center space-y-1 bg-slate-100 bg-opacity-90 px-2 py-1 opacity-0 transition-opacity",
+            "absolute bottom-0 mt-auto flex h-14 w-full flex-col items-center justify-center space-y-1 bg-slate-100 bg-opacity-90 px-2 py-1 opacity-0 transition-opacity",
             "group-hover:opacity-100"
           )}
         >
           <p className="mr-auto line-clamp-1 text-left text-lg font-semibold leading-tight">
             {game?.name}
           </p>
-          <p className="mr-auto line-clamp-2 overflow-hidden text-ellipsis text-sm leading-tight">
+          <p className="mr-auto line-clamp-1 overflow-hidden text-ellipsis text-sm leading-tight">
             {game?.description}
           </p>
+        </div>
+
+        <div className="absolute right-2 top-0 space-x-2">
+          <Button
+            variant={"secondary"}
+            className={cn(
+              "pointer-events-none aspect-square min-h-0 min-w-0 p-2 py-1 opacity-0",
+              "group-hover:pointer-events-auto group-hover:opacity-100"
+            )}
+            onClick={handleEdit}
+          >
+            <PencilIcon size={16} />
+          </Button>
+          <Button
+            variant={"destructive"}
+            className={cn(
+              "pointer-events-none aspect-square min-h-0 min-w-0 p-2 py-1 opacity-0",
+              "group-hover:pointer-events-auto group-hover:opacity-100"
+            )}
+            onClick={handleDelete}
+          >
+            <TrashIcon size={16} />
+          </Button>
         </div>
       </div>
     </Link>
