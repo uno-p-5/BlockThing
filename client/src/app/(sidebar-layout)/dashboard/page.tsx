@@ -1,18 +1,25 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+import { pageStyle } from "@/styles/shared";
 import { useQuery } from "convex/react";
+
+import { api } from "../../../../convex/_generated/api";
 import { Create } from "../../../components/dashboard/Create";
 import { GameCard } from "../../../components/dashboard/GameCard";
-import { api } from "../../../../convex/_generated/api";
 
 export default function Page() {
   const user = useQuery(api.user.getCurrentUser);
-  const projectsIds = (user?.owned_projects || []).concat(user?.shared_projects || []);
+  const projectsIds = (user?.owned_projects || []).concat(
+    user?.shared_projects || []
+  );
 
-  const projects = useQuery(api.project.getProjectsByIds, { projectIds: projectsIds });
+  const projects = useQuery(api.project.getProjectsByIds, {
+    projectIds: projectsIds,
+  });
 
   return (
-    <div className="px-4 py-6">
+    <div className={cn(pageStyle)}>
       <h1 className="pb-8 text-4xl font-semibold">
         Welcome back, {user?.name}
       </h1>
@@ -28,7 +35,7 @@ export default function Page() {
                 key={idx}
                 game={game}
               />
-            )
+            );
           })}
         </div>
       </div>
