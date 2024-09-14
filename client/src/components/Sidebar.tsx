@@ -3,10 +3,10 @@
 import { Separator } from "@/components/ui/separator";
 import { UserProfile } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { GamepadIcon, LayoutDashboardIcon } from "lucide-react";
+import { GamepadIcon, LayoutDashboardIcon, PencilIcon } from "lucide-react";
 import Link from "next/link";
 
-import { api } from "../../../convex/_generated/api";
+import { api } from "../../convex/_generated/api";
 
 export function Sidebar() {
   const user = useQuery(api.user.getCurrentUser);
@@ -20,9 +20,12 @@ export function Sidebar() {
         <Separator className="mx-3 my-3 w-5 p-[1px]" />
       </div>
 
-      <div className="mb-auto space-y-2">
+      <div className="mb-auto flex flex-col space-y-3">
         <Link href={"/dashboard"}>
           <LayoutDashboardIcon className="m-auto" />
+        </Link>
+        <Link href={"/editor"}>
+          <PencilIcon className="m-auto" />
         </Link>
       </div>
 

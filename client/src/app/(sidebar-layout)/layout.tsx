@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { Sidebar } from "../components/Sidebar";
+import { Sidebar } from "../../components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "Dashboard — BlockThingy",
+  title: "BlockThingy",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 

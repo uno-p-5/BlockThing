@@ -1,5 +1,5 @@
-import { Create } from "../components/dashboard/Create";
-import { GameCard } from "../components/dashboard/GameCard";
+import { Create } from "../../../components/dashboard/Create";
+import { GameCard } from "../../../components/dashboard/GameCard";
 
 export default function Page() {
   return (
