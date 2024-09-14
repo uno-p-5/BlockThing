@@ -1,17 +1,16 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import { Doc } from "../../../convex/_generated/dataModel";
 
 interface GameCardProps {
-  href: string;
-  title: string;
-  description: string;
+  game: Doc<"project">;
 }
 
-export function GameCard({ href, title, description }: GameCardProps) {
+export function GameCard({ game }: GameCardProps) {
   return (
     <Link
-      href={href}
+      href={`/editor/${game?._id}`}
       className="flex max-h-fit max-w-fit"
     >
       <div
@@ -37,10 +36,10 @@ export function GameCard({ href, title, description }: GameCardProps) {
           )}
         >
           <p className="mr-auto line-clamp-1 text-left text-lg font-semibold leading-tight">
-            {title}
+            {game?.name}
           </p>
           <p className="mr-auto line-clamp-2 overflow-hidden text-ellipsis text-sm leading-tight">
-            {description}
+            {game?.description}
           </p>
         </div>
       </div>

@@ -3,7 +3,7 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv"; 
 import cors from "cors";
 /**************************************************************************/
-import { streaming_page } from "./templates/test_streaming";
+// import { streaming_page } from "../python/test_streaming";
 import { cors_options } from "./config/cors";
 import { oai_client } from "./functions/openai";
 /**************************************************************************/
@@ -43,7 +43,19 @@ APP.get('/', (req: Request, res: Response) => {
 /**************************************************************************/
 APP.get('/_test', (req: Request, res: Response) => {
     console.log(`requested ${req.url}`);
-    res.send(streaming_page);
+    // res.send(streaming_page);
+    res.status(200).send('Hello World');
+});
+/**************************************************************************/
+/**************************************************************************/
+
+
+
+/**************************************************************************/
+/* Embedding API */
+/**************************************************************************/
+APP.get('/_test', (req: Request, res: Response) => {
+  
 });
 /**************************************************************************/
 /**************************************************************************/

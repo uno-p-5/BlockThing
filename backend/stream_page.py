@@ -1,4 +1,4 @@
-export const streaming_page = `
+STREAM_PAGE= """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,4 +51,4 @@ export const streaming_page = `
     });
   </script>
 </body>
-</html>`;
+</html>"""

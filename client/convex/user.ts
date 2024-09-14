@@ -1,4 +1,4 @@
-import { internalMutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const getCurrentUser = query({
@@ -31,6 +31,38 @@ export const createUser = internalMutation({
         return user;
     }
 });
+
+
+export const addProject = mutation({
+    args: { 
+        project_id: v.string(),
+        shared: v.optional(v.boolean())
+    },
+    handler: async (ctx, args) => {
+        const userId = await ctx.auth.getUserIdentity();
+        if (!userId) {
+            throw new Error('Not Authenticated');
+        }
+        const existing = await ctx.db.query("user")
+        .filter(q => q.eq(q.field("user_id"), userId.subject))
+        .first();
+
+        if (!existing) {
+            throw new Error("User Not Found");
+        }
+
+        if (args.shared) {
+            const doc = await ctx.db.patch(existing._id, {
+                shared_projects: (existing.shared_projects || []).concat(args.project_id)
+            });
+            return doc;
+        } 
+        const doc = await ctx.db.patch(existing._id, {
+            owned_projects: (existing.owned_projects || []).concat(args.project_id)
+        });
+        return doc;
+    }
+})
 
 
 export const update = internalMutation({
