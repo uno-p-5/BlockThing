@@ -1,28 +1,18 @@
-<<<<<<< HEAD
-/* eslint-disable @next/next/no-css-tags */
-=======
 /**
  * Confused about this file? Yeah. Me too.
  *
  * References:
  * @see {@link https://stackoverflow.com/questions/72599597/what-is-proper-way-to-import-script-files-in-next-js}
  */
->>>>>>> 1107045784a3eb542cd6cdcea20fac64696191af
 
 "use client";
 
 import { useEffect, useRef } from "react";
 
-<<<<<<< HEAD
-import Head from "next/head";
-import Script from "next/script";
-
-=======
 import Script from "next/script";
 
 import styles from "./editor.module.css";
 
->>>>>>> 1107045784a3eb542cd6cdcea20fac64696191af
 declare global {
   interface Window {
     // trust me bro
@@ -61,30 +51,7 @@ export default function Page() {
 
   return (
     <>
-<<<<<<< HEAD
-      <Head>
-        {/* CodeMirror CSS */}
-        <link
-          rel="stylesheet"
-          href="codemirror/codemirror.css"
-        />
-        <link
-          rel="stylesheet"
-          href="codemirror/fullscreen.css"
-        />
-        <link
-          rel="stylesheet"
-          href="codemirror/show-hint.css"
-        />
-        {/* BlockMirror CSS */}
-        <link
-          rel="stylesheet"
-          href="block_mirror/block_mirror.css"
-        />
-      </Head>
-      {/* CodeMirror */}
-=======
->>>>>>> 1107045784a3eb542cd6cdcea20fac64696191af
+      {/* codemirror */}
       <Script
         src="codemirror/codemirror.js"
         strategy="afterInteractive"
@@ -105,11 +72,9 @@ export default function Page() {
         src="codemirror/python.js"
         strategy="afterInteractive"
       />
-<<<<<<< HEAD
-      {/* Blockly */}
-=======
 
->>>>>>> 1107045784a3eb542cd6cdcea20fac64696191af
+      {/* blockly */}
+
       <Script
         src="blockly/blockly_compressed.js"
         strategy="afterInteractive"
@@ -126,10 +91,8 @@ export default function Page() {
         src="blockly/python_compressed.js"
         strategy="afterInteractive"
       />
-<<<<<<< HEAD
-=======
 
->>>>>>> 1107045784a3eb542cd6cdcea20fac64696191af
+      {/* skulpt */}
       <Script
         src="dist/skulpt.js"
         strategy="afterInteractive"
@@ -139,27 +102,17 @@ export default function Page() {
         strategy="afterInteractive"
       />
 
-<<<<<<< HEAD
-      {/* BlockMirror */}
-=======
->>>>>>> 1107045784a3eb542cd6cdcea20fac64696191af
+      {/* block_mirror */}
       <Script
         src="dist/block_mirror.js"
         strategy="afterInteractive"
       />
 
       <main>
-<<<<<<< HEAD
-        <h1>Welcome to the Blockly and CodeMirror Integration!</h1>
-        <div
-          id="blockmirror-editor"
-          ref={blockMirrorRef}
-=======
         <div
           id="blockmirror-editor"
           ref={blockMirrorRef}
           className={styles.active}
->>>>>>> 1107045784a3eb542cd6cdcea20fac64696191af
         />
       </main>
     </>
