@@ -6,13 +6,17 @@ const nextConfig = {
         protocol: "https",
         hostname: "media.licdn.com",
       },
+      {
+        protocol: "https",
+        hostname: "logos-world.net",
+      },
     ],
   },
   async rewrites() {
     return [
       {
-        source: '/pyapi/:path*', 
-        destination: 'http://localhost:3000/:path*',
+        source: "/pyapi/:path*",
+        destination: "http://localhost:3000/:path*",
       },
     ];
   },
