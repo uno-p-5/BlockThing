@@ -2,11 +2,12 @@
 import os
 import json
 import asyncio
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from stream_page import STREAM_PAGE
 from dotenv import load_dotenv
+from sockets import ConnectionManager
 import openai
 ###############################################
 
@@ -18,6 +19,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 ###############################################
 # Initialize FastAPI app
 app = FastAPI()
+app.ws_manager = ConnectionManager()
 
 ###############################################
 # Constants
@@ -100,3 +102,37 @@ async def llm_o1(request: Request):
 
     return StreamingResponse(event_generator(), media_type='text/plain', headers={'Connection': 'keep-alive'})
 
+
+
+###############################################
+# WebSocket Connector
+###############################################
+@app.websocket("/ws/connect")
+async def chat_connector(ws: WebSocket):
+    await app.ws_manager.connect(ws)
+    try:
+        while True:
+            # data = await ws.receive_text()
+            # print(data)
+            # data = json.loads(data)
+
+            await ws.send_text("Message sent every 5 seconds")
+            await asyncio.sleep(1)
+
+            # if data["user_id"]:
+            #     # user_data = 
+            #     print(data)
+    except WebSocketDisconnect:
+        app.ws_manager.disconnect(ws)
+
+
+
+###############################################
+# WebSocket Logger
+###############################################
+@app.get('/util/log')
+async def ws_logger():
+    return {
+        "active_connections": app.ws_manager.active_connections,
+        "num_connections": len(app.ws_manager.active_connections)   
+    }
