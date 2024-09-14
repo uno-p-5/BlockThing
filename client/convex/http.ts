@@ -32,10 +32,10 @@ http.route({
                     }); 
                 case 'user.updated':
                     await ctx.runMutation(internal.user.update, { 
-                        userId: result.data.id, 
+                        user_id: result.data.id, 
                         email: result.data.email_addresses[0]?.email_address, 
-                        fullName: result.data.first_name + ' ' + result.data.last_name,
-                        pfpUrl: result.data.image_url,
+                        name: result.data.first_name + ' ' + result.data.last_name,
+                        pfp_url: result.data.image_url,
                     });
                 // case 'user.deleted':
                 //     await ctx.runMutation(internal.user.remove, {

@@ -35,25 +35,25 @@ export const createUser = internalMutation({
 
 export const update = internalMutation({
     args: {
-        userId: v.string(),
+        user_id: v.string(),
         email: v.string(),
-        fullName: v.string(), 
-        pfpUrl: v.string(), 
+        name: v.string(), 
+        pfp_url: v.string(), 
 
     },
     handler: async (ctx, args) => {
         let existingDoc = await ctx.db.query("user")
-        .filter(q => q.eq(q.field("user_id"), args.userId))
+        .filter(q => q.eq(q.field("user_id"), args.user_id))
         .first();
 
-        const { userId, ...rest } = args; 
+        const { user_id, ...rest } = args; 
 
         if (!existingDoc) { 
             const newId = await createUser(ctx, {
-                user_id: userId,
+                user_id: user_id,
                 email: rest.email,
-                name: rest.fullName,
-                pfp_url: rest.pfpUrl,
+                name: rest.name,
+                pfp_url: rest.pfp_url,
             })
             existingDoc = await ctx.db.query("user")
             .filter(q => q.eq(q.field("_id"), newId))
