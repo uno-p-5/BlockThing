@@ -15,7 +15,10 @@ const config = {
   singleQuote: false,
   semi: true,
   useTabs: false,
-  plugins: ["@ianvs/prettier-plugin-sort-imports"],
+  plugins: [
+    "@ianvs/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss",
+  ],
   importOrder: [
     "^(react/(.*)$)|^(react$)|^(react-dom$)|^(react-dom/(.*)$)",
     "",
