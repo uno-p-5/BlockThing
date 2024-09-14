@@ -3,5 +3,6 @@
 venv/
 node_modules/
 __pycache__/
+temp/
 
 .vscode

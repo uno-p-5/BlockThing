@@ -4,6 +4,7 @@ import { useConvexAuth } from "convex/react";
 import { redirect } from "next/navigation";
 
 import { Sidebar } from "../../components/Sidebar";
+import Image from "next/image";
 
 export default function RootLayout({
   children,
@@ -11,9 +12,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const { isAuthenticated, isLoading } = useConvexAuth();
+  const num = Math.floor(Math.random() * 4) + 1;
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <Image src={`/images/loaders/loader${1}.gif`} 
+              alt="loading" width={100} height={100} />
+      </div>
+    )
   }
 
   if (!isAuthenticated && !isLoading) {
