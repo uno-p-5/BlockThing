@@ -1,10 +1,19 @@
+"use client";
+
 import { Separator } from "@/components/ui/separator";
+import { UserProfile } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
 import { GamepadIcon, LayoutDashboardIcon } from "lucide-react";
 import Link from "next/link";
+
+import { api } from "../../../convex/_generated/api";
+
 export function Sidebar() {
+  const user = useQuery(api.user.getCurrentUser);
+
   return (
     <div className="flex-between w-12 flex-col items-center border-r-2 p-3 py-6">
-      <div className="flex-center flex-col rounded-full ">
+      <div className="flex-center flex-col rounded-full">
         <Link href={"/"}>
           <GamepadIcon className="m-auto" />
         </Link>
@@ -17,9 +26,7 @@ export function Sidebar() {
         </Link>
       </div>
 
-      <div>
-        <div>Clerk Stuff</div>
-      </div>
+      <div>{user ? <UserProfile /> : null}</div>
     </div>
   );
 }
