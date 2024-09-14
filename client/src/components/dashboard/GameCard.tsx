@@ -7,12 +7,16 @@ import Link from "next/link";
 
 import { Doc } from "../../../convex/_generated/dataModel";
 import { Button } from "../ui/button";
+import { useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 interface GameCardProps {
   game: Doc<"project">;
 }
 
 export function GameCard({ game }: GameCardProps) {
+  const deleteGame = useMutation(api.project.deleteProject);
+
   const handleEdit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -24,7 +28,7 @@ export function GameCard({ game }: GameCardProps) {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log("delete!");
+    deleteGame({ projectId: game._id });
   };
 
   return (

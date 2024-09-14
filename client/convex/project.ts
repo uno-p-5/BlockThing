@@ -69,6 +69,29 @@ export const getProjectsByIds = query({
 });
 
 
+export const deleteProject = mutation({
+    args: { projectId: v.id("project") },
+    handler: async (ctx, args) => {
+        const userId = await ctx.auth.getUserIdentity();
+        if (!userId) {
+            throw new Error('Not Authenticated');
+        }
+
+        const project = await ctx.db.get(args.projectId);
+        if (!project) {
+            throw new Error('Project not found');
+        }
+
+        if (project.creator !== userId.subject) {
+            throw new Error('You do not have permission to delete this project');
+        }
+        
+        await ctx.db.delete(args.projectId);
+        return true;
+    }
+});
+
+
 // export const update = internalMutation({
 //     args: {
 //         user_id: v.string(),
