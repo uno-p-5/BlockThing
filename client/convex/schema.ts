@@ -23,7 +23,7 @@ export default defineSchema({
         user_id: v.string(),
         pfp_url: v.string(), 
         email: v.string(), 
-        name: v.string(), 
+        name: v.string(),
     })
     .index("byUserId", ["user_id"])
     .index("byEmail", ["email"])
