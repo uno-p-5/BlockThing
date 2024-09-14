@@ -30,11 +30,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <EdgeStoreProvider>
         <ConvexClientProvider>
-          <EdgeStoreProvider>
             {children}
-          </EdgeStoreProvider>
         </ConvexClientProvider>
+        </EdgeStoreProvider>
       </body>
     </html>
   );
