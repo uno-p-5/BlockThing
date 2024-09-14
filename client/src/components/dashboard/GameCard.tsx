@@ -1,4 +1,4 @@
-import { cn } from "@/public/lib/utils";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { Doc } from "../../../convex/_generated/dataModel";
