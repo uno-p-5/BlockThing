@@ -9,8 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/clerk-js": "^5.21.2",
+    "@clerk/nextjs": "^5.5.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "convex": "^1.16.0",
     "lucide-react": "^0.441.0",
     "next": "14.2.11",
     "react": "^18",
