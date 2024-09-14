@@ -1,14 +1,17 @@
 "use client";
 
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import { UserButton } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { GamepadIcon, LayoutDashboardIcon, PencilIcon } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { api } from "../../convex/_generated/api";
 
 export function Sidebar() {
+  const pathname = usePathname();
   const user = useQuery(api.user.getCurrentUser);
 
   return (
@@ -22,10 +25,20 @@ export function Sidebar() {
 
       <div className="mb-auto flex flex-col space-y-3">
         <Link href={"/dashboard"}>
-          <LayoutDashboardIcon className="m-auto" />
+          <LayoutDashboardIcon
+            className={cn(
+              "m-auto",
+              pathname === "/dashboard" ? "text-blue-500" : null
+            )}
+          />
         </Link>
         <Link href={"/editor"}>
-          <PencilIcon className="m-auto" />
+          <PencilIcon
+            className={cn(
+              "m-auto",
+              pathname === "/editor" ? "text-blue-500" : null
+            )}
+          />
         </Link>
       </div>
 
