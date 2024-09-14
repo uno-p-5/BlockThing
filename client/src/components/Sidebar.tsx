@@ -1,7 +1,7 @@
 "use client";
 
 import { Separator } from "@/components/ui/separator";
-import { UserProfile } from "@clerk/nextjs";
+import { UserButton } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { GamepadIcon, LayoutDashboardIcon, PencilIcon } from "lucide-react";
 import Link from "next/link";
@@ -29,7 +29,7 @@ export function Sidebar() {
         </Link>
       </div>
 
-      <div>{user ? <UserProfile /> : null}</div>
+      <div>{user ? <UserButton /> : null}</div>
     </div>
   );
 }
