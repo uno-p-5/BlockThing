@@ -81,3 +81,8 @@
     @apply flex items-center justify-between;
   }
 }
+
+/* Resolves CSS bug resulting in scrollbar not disappearing */
+svg.blocklyScrollbarVertical.blocklyFlyoutScrollbar {
+  display: none !important;
+}
