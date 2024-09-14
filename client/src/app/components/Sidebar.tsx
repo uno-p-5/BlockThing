@@ -3,7 +3,7 @@ import { GamepadIcon, LayoutDashboardIcon } from "lucide-react";
 import Link from "next/link";
 export function Sidebar() {
   return (
-    <div className="flex-between w-12 flex-col items-center border-r-2 border-[#C2C2C2] p-3">
+    <div className="flex-between w-12 flex-col items-center border-r-2 p-3 py-6">
       <div className="flex-center flex-col rounded-full ">
         <Link href={"/"}>
           <GamepadIcon className="m-auto" />
