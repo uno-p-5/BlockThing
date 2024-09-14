@@ -1,11 +1,9 @@
 "use client";
 
-// import type { Metadata } from "next";
+import { useConvexAuth } from "convex/react";
+import { redirect } from "next/navigation";
 
 import { Sidebar } from "../../components/Sidebar";
-import { redirect } from "next/navigation";
-import { useConvexAuth } from "convex/react";
-
 
 export default function RootLayout({
   children,
@@ -15,14 +13,8 @@ export default function RootLayout({
   const { isAuthenticated, isLoading } = useConvexAuth();
 
   if (isLoading) {
-    return (
-        <div>Loading...</div>
-    )
+    return <div>Loading...</div>;
   }
-
-  // if(isLoading) { return (
-  //   <div>Loading Dev...</div>
-  // )}
 
   if (!isAuthenticated && !isLoading) {
     return redirect("/");

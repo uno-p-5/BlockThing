@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+
 import "./globals.css";
+
 import { ConvexClientProvider } from "@/components/providers/auth-provider";
 import { EdgeStoreProvider } from "@/lib/edgestore";
+
+import { EditorScripts } from "./(sidebar-layout)/editor/EditorScripts";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,13 +31,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <EditorScripts />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <EdgeStoreProvider>
-        <ConvexClientProvider>
-            {children}
-        </ConvexClientProvider>
+          <ConvexClientProvider>{children}</ConvexClientProvider>
         </EdgeStoreProvider>
       </body>
     </html>

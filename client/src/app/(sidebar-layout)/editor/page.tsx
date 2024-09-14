@@ -3,13 +3,15 @@
  *
  * References:
  * @see {@link https://stackoverflow.com/questions/72599597/what-is-proper-way-to-import-script-files-in-next-js}
+ *
+ * @see {@link ./EditorScripts.tsx} imported scripts
+ * @see {@link ./editor.module.css} imported stylesheets
+ * @see {@link client/public} static dist files?
  */
 
 "use client";
 
 import { useEffect, useRef } from "react";
-
-import Script from "next/script";
 
 import styles from "./editor.module.css";
 
@@ -22,7 +24,6 @@ declare global {
 }
 
 export default function Page() {
-  // Create a ref for the BlockMirror container
   const blockMirrorRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -44,77 +45,18 @@ export default function Page() {
         initializeBlockMirror();
         clearInterval(intervalId);
       }
-    }, 100);
+    }, 1000);
 
     return () => clearInterval(intervalId);
   }, []);
 
   return (
     <>
-      {/* codemirror */}
-      <Script
-        src="codemirror/codemirror.js"
-        strategy="afterInteractive"
+      <div
+        id="blockmirror-editor"
+        ref={blockMirrorRef}
+        className={styles.active}
       />
-      <Script
-        src="codemirror/show-hint.js"
-        strategy="afterInteractive"
-      />
-      <Script
-        src="codemirror/python-hint.js"
-        strategy="afterInteractive"
-      />
-      <Script
-        src="codemirror/fullscreen.js"
-        strategy="afterInteractive"
-      />
-      <Script
-        src="codemirror/python.js"
-        strategy="afterInteractive"
-      />
-
-      {/* blockly */}
-
-      <Script
-        src="blockly/blockly_compressed.js"
-        strategy="afterInteractive"
-      />
-      <Script
-        src="blockly/blocks_compressed.js"
-        strategy="afterInteractive"
-      />
-      <Script
-        src="blockly/msg/js/en.js"
-        strategy="afterInteractive"
-      />
-      <Script
-        src="blockly/python_compressed.js"
-        strategy="afterInteractive"
-      />
-
-      {/* skulpt */}
-      <Script
-        src="dist/skulpt.js"
-        strategy="afterInteractive"
-      />
-      <Script
-        src="dist/skulpt-stdlib.js"
-        strategy="afterInteractive"
-      />
-
-      {/* block_mirror */}
-      <Script
-        src="dist/block_mirror.js"
-        strategy="afterInteractive"
-      />
-
-      <main>
-        <div
-          id="blockmirror-editor"
-          ref={blockMirrorRef}
-          className={styles.active}
-        />
-      </main>
     </>
   );
 }

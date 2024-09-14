@@ -1,4 +1,4 @@
 @import "/codemirror/codemirror.css";
 @import "/codemirror/fullscreen.css";
 @import "/codemirror/show-hint.css";
-@import "/block_mirror/block_mirror.css";
+@import "/dist/block_mirror.css";
