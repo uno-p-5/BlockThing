@@ -5,7 +5,6 @@ import openai
 import asyncio
 from dotenv import load_dotenv
 from stream_page import STREAM_PAGE
-from sockets import ConnectionManager
 from fastapi.middleware.cors import CORSMiddleware
 from oai_configs import O1_SYSTEM_PROMPT, GPT4O_SYSTEM_PROMPT
 from fastapi.responses import HTMLResponse, StreamingResponse
@@ -20,11 +19,63 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 ###############################################
 # Initialize FastAPI app
 app = FastAPI()
-app.ws_manager = ConnectionManager()
+
+@app.on_event("startup")
+def start():
+    # app.ws_manager = ConnectionManager()
+    app.active_cursors = {}
+    app.status = "ACTIVE"
+
+@app.on_event("shutdown")
+def shutdown():
+    app.status = "SHUTDOWN"
 
 ###############################################
 # Constants
 PORT = int(os.getenv('PORT', 8080))
+
+from typing import List 
+from fastapi import WebSocket
+
+# Manager
+# class ConnectionManager():
+#     """
+#     Manages WebSocket Connections for the OpenCHA API
+#     """
+#     active_connections: List[WebSocket] = []
+#     active_cursors: dict[dict] = []
+
+#     def __str__(self):
+#         return str(self.active_cursors)
+
+#     async def connect(self, websocket: WebSocket):
+#         """
+#         Adds a WebSocket Connection to the ConnectionManager
+#         """
+#         await websocket.accept()
+#         self.active_connections.append(websocket)
+
+
+#     async def disconnect(self, websocket: WebSocket):
+#         """
+#         Removes a WebSocket Connection from the ConnectionManager
+#         """
+#         await self.active_connections.remove(websocket)
+
+
+#     async def send_to_ws(self, message: dict, websocket: WebSocket):
+#         """
+#         Sends a message to a specific WebSocket Connection
+#         """
+#         await websocket.send_json(message)
+
+
+#     async def broadcast(self, message: str):
+#         """
+#         Broadcasts a text message to all active WebSocket Connections
+#         """
+#         for connection in self.active_connections:
+#             await connection.send_text(message)
 
 ###############################################
 # Apply CORS middleware
@@ -149,24 +200,26 @@ async def llm_4o(request: Request):
 ###############################################
 # WebSocket Connector
 ###############################################
-@app.websocket("/ws/connect")
+@app.websocket("/ws/cursor")
 async def chat_connector(ws: WebSocket):
-    await app.ws_manager.connect(ws)
+    await ws.accept()
     try:
         while True:
-            data = await ws.receive_text()
-            data = json.loads(data)
+            data = await ws.receive()
+            data = json.loads(data["text"])
+            uuid = data["uuid"]
+            app.active_cursors[uuid] = {
+                "x": data["x"],
+                "y": data["y"],
+            }
 
-            x, y = data['x'], data['y']
-
-            await ws.send_text("Message sent every 5 seconds")
-            await asyncio.sleep(1)
-
-            # if data["user_id"]:
-            #     # user_data = 
-            #     print(data)
+            await ws.send_json(app.active_cursors)
+            await asyncio.sleep(0.5)
     except WebSocketDisconnect:
-        app.ws_manager.disconnect(ws)
+        del app.active_cursors[str(ws)]
+        await ws.close()
+    except Exception as e:
+        print("ERR", e)
 
 
 
@@ -175,7 +228,5 @@ async def chat_connector(ws: WebSocket):
 ###############################################
 @app.get('/log/ws')
 async def ws_logger():
-    return {
-        "active_connections": app.ws_manager.active_connections,
-        "num_connections": len(app.ws_manager.active_connections)   
-    }
+    print(app.active_cursors)
+    return 'logged!'
