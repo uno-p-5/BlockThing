@@ -13,6 +13,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { Chat } from "@/components/editor/Chat";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,7 +22,6 @@ import { pageStyle } from "@/styles/shared";
 
 import styles from "./editor.module.css";
 import { gravityPlatformer } from "./test-data";
-import Chatbox from "@/components/editor/Chat";
 
 declare global {
   interface Window {
@@ -81,7 +81,9 @@ export default function Page() {
   }, []);
 
   return (
-    <div className={`${pageStyle} flex justify-between flex-row`}>
+    <div
+      className={`${pageStyle} flex flex-row justify-between space-x-8 py-8`}
+    >
       <div className="flex-grow rounded-lg">
         <div className="space-y-2">
           <div className="flex flex-row space-x-4 align-middle">
@@ -119,7 +121,7 @@ export default function Page() {
         </div>
       </div>
 
-      <Chatbox />
+      <Chat />
     </div>
   );
 }
