@@ -28,12 +28,12 @@ export const Chat = () => {
     ]);
 
     try {
-      const response = await fetch("http://localhost:8080/llm/o1", {
+      const response = await fetch("/pyapi/llm/o1", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ messages: messages }),
       });
 
       if (!response.body) {
@@ -134,77 +134,4 @@ export const Chat = () => {
   );
 };
 
-const chatmsgs = [
-  {
-    role: "user",
-    message: "Hello, how are you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-  {
-    role: "model",
-    message: "Doing great! How about you?",
-  },
-];
+const chatmsgs: Message[] = [];
