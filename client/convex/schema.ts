@@ -5,7 +5,7 @@ export default defineSchema({
     project: defineTable({
         creator: v.string(),
         name: v.string(), 
-        // shared_users: v.array(v.string()),
+        shared_users: v.optional(v.array(v.string())),
         code: v.optional(v.string()),
         description: v.optional(v.string()),
         embedding: v.optional(v.array(v.float64())),

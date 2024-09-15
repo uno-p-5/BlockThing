@@ -90,6 +90,7 @@ export const Chat = ({
       const decoder = new TextDecoder();
       let done = false;
       let botMessage = "";
+      let codeMessage = "";
 
       // Append an empty message from the bot to the messages
       setMessages((prevMessages) => [
@@ -103,9 +104,17 @@ export const Chat = ({
 
         if (value) {
           const chunk = decoder.decode(value, { stream: true });
-          // console.log("Chunk received:", chunk);
 
           botMessage += chunk;
+
+          if (init) {
+            if (botMessage.includes("CODE")) {
+              codeMessage = botMessage.slice(botMessage.indexOf("CODE") + 5, botMessage.indexOf("ENDCODE"));
+              codeMessage.replace('```python', '');
+              codeMessage.replace('```', '');
+              botMessage = botMessage.slice(botMessage.indexOf("EXPLANATION") + 12, botMessage.indexOf("CODE"));
+            }
+          }
 
           // Update the last message in messages
           setMessages((prevMessages) => {
@@ -113,6 +122,15 @@ export const Chat = ({
             updatedMessages[updatedMessages.length - 1].content = botMessage;
             return updatedMessages;
           });
+
+          if (init) {
+            if (codeMessage) {
+              codeMessage.replace('```python', '');
+              codeMessage.replace('```', '');
+              console.log(codeMessage);
+              setCode(codeMessage);
+            }
+          }
         }
       }
 

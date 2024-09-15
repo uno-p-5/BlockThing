@@ -16,14 +16,18 @@ import { Chat } from "@/components/editor/Chat";
 // import { Editor } from "@/components/editor/Editor";
 
 import styles from "../../../../components/editor/editor.module.css";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import Cursors from "@/components/Cursors";
 const Editor = dynamic(() => import("@/components/editor/Editor"), { ssr: false });
 // const Cursors = dynamic(() => import("@/components/Cursors"), { ssr: false });
 
+
 export default function Page() {
   let initial_prompt: string | null;
+  const { projectId } = useParams();
+  const project_id = Array.isArray(projectId) ? projectId[0] : projectId;
+
   const [code, setCode] = useState("");
   const sparams = useSearchParams();
   const initial_prompt_encoded = sparams.get("prompt") || null;
@@ -44,8 +48,8 @@ export default function Page() {
     <div
       className={`flex h-full min-h-full w-full max-w-full flex-row justify-between space-x-8 bg-slate-50 px-8 py-8`}
     >
-      <Editor />
-      <Cursors />
+      <Editor code={code} setCode={setCode} projectId={project_id} />
+      {/* <Cursors /> */}
       <Chat
         initialPrompt={initial_prompt}
         code={code}

@@ -143,10 +143,13 @@ async def llm_o1(request: Request):
         "content": O1_SYSTEM_PROMPT(body["messages"][0]["content"])
     }]
 
+    print(messages)
+
     def event_generator():
         try:
             response = openai.chat.completions.create(
-                model='o1-preview', # 'gpt-4o',
+                model='o1-preview',
+                # model="gpt-4o",
                 messages=messages,
                 # stream=True,
             )
@@ -156,7 +159,9 @@ async def llm_o1(request: Request):
             #     if content:
             #         print(content, end='')
             #         yield content
-            yield response.choices[0].message.content
+            content = response.choices[0].message.content
+            print(content)
+            yield content
         except Exception as e:
             yield 'Model ran into an error!'
             print(f"Error: {e}")

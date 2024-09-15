@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 
 import { gravityPlatformer } from "../../app/(sidebar-layout)/editor/test-data";
 import type { Editor, EditorConfiguration, ViewMode } from "./types";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 declare global {
   interface Window {
@@ -16,11 +18,58 @@ declare global {
   }
 }
 
-export default function Editor() {
+interface EditorProps {
+  code: string;
+  setCode: (code: string) => void;
+  projectId: string;
+}
+
+export default function Editor({ code, setCode, projectId }: EditorProps) {
   const blockMirrorRef = useRef<HTMLDivElement | null>(null);
   const hasCreatedBlockMirror = useRef(false);
+  const projId = projectId;
+  const projectData = useQuery(api.project.getCurrentProject, { projectId: projId });
+  const updateProject = useMutation(api.project.update);
   const [editor, setEditor] = useState<Editor>();
   const [editorHeight, setEditorHeight] = useState(window.innerHeight - 112);
+
+  useEffect(() => {
+    console.log(projectData);
+    if (projectData && projectData?.code) {
+      setCode(projectData.code);
+    }
+  }, [projectData]);
+
+  useEffect(() => {
+    // Set code based on project data or editor's current code at mount
+    if (code) {
+      // setCode(editor?.getCode() || "");
+      editor?.setCode(code);
+    }
+  
+    // Set up an interval to regularly check the editor's code and sync it
+    const intervalId = setInterval(() => {
+      const currentCode = editor?.getCode();
+  
+      // Only update the state if the code is different, without resetting the cursor
+      if (currentCode !== code) {
+        setCode(currentCode || "");
+      }
+    }, 1000); // Adjust interval as needed (currently set to 1 second)
+  
+    // Clean up interval on unmount
+    return () => clearInterval(intervalId);
+  }, [code, editor, projectData]);
+  
+  useEffect(() => {
+    if (code) {
+      updateProject({
+        project_id: projId,
+        code: code,
+      });
+    }
+  }, [code, editor, projId]);
+  
 
   const handleChangeMode = (value: string) => {
     try {
