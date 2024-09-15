@@ -79,7 +79,6 @@ async def embedding_api(request: Request):
 ###############################################
 @app.post("/llm/o1")
 async def llm_o1(request: Request):
-
     def event_generator():
         try:
             response = openai.chat.completions.create(
