@@ -138,8 +138,22 @@ async def embedding_api(request: Request):
 ###############################################
 @app.post("/file/download")
 async def download_file(request: Request):
+    print('hit')
     body = await get_body(request)
-    arr = bytearray(body["buf"])
+    buf_str = body["buf"]
+    
+    print(buf_str)
+    
+    uint8_array = buf_str.encode('utf-8')
+    
+    print(uint8_array)
+
+    # Step 3: Extract the ArrayBuffer (in Python terms, a buffer or memoryview)
+    array_buffer = memoryview(uint8_array)
+    
+    print(array_buffer)
+
+    arr = bytearray(array_buffer)
 
     with open(Path(DATA / f'{body["project_id"]}.sb3'), 'wb') as f:
         f.write(arr)

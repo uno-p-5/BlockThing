@@ -66,7 +66,7 @@ export const FromScratch = ({
     //   console.log("Project data:", data);
 
     //   // Step 1: Convert JSON to a string
-    //   const jsonString = JSON.stringify(data.buf);
+    // const jsonString = JSON.stringify(data.buf);
 
     //   // Step 2: Encode the string to UTF-8
     //   const encoder = new TextEncoder();
