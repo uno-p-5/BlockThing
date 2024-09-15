@@ -130,7 +130,7 @@ async def llm_o1(request: Request):
     def event_generator():
         try:
             response = openai.chat.completions.create(
-                model='gpt-4o',
+                model='gpt-4o' if body.get("tuned", False) == False else "ft:gpt-4o-2024-08-06:hackathons::A7YDvxgU",
                 messages=messages,
                 stream=True,
             )
