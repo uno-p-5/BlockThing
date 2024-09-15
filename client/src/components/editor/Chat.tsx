@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Message } from "@/lib/types";
 import { Mic, Send } from "lucide-react";
@@ -9,7 +9,7 @@ import ChatMessage from "./ChatMessage";
 import "./messages.css";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { update } from "../../../convex/project";
+import { useRouter } from "next/navigation";
 
 interface ChatParams {
   initialPrompt?: string | null;
@@ -27,6 +27,7 @@ export const Chat = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [prompt, setPrompt] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
   const scrollRef = useRef<HTMLDivElement>(null);
   const projectData = useQuery(api.project.getCurrentProject, { projectId: projId });
   const updateProject = useMutation(api.project.update);
@@ -154,6 +155,8 @@ export const Chat = ({
               setCode(codeMessage);
             }
           }
+
+          router.replace(`/editor/${projId}`);
         }
       }
 

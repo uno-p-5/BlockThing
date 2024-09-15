@@ -53,7 +53,7 @@ export default function Page() {
 
   const [tryAgain, setTryAgain] = useState(true);
   const [loadingScratch, setLoadingScratch] = useState(false);
-  const idMatch = decodeURIComponent(scratchLink)?.match(/projects\/(\d+)/); // ! fix me
+  const idMatch = decodeURIComponent(scratchLink || "")?.match(/projects\/(\d+)/); // ! fix me
 
   useEffect(() => {
     const handleImportScratch = async () => {
@@ -105,17 +105,10 @@ export default function Page() {
     <div
       className={`flex h-full min-h-full w-full max-w-full flex-row justify-between space-x-8 bg-slate-50 px-8 py-8`}
     >
-<<<<<<< HEAD
       <Editor 
         code={code} 
         setCode={setCode} 
         projectId={project_id} 
-=======
-      <Editor
-        code={code}
-        setCode={setCode}
-        projectId={project_id}
->>>>>>> 83f9fab28abd1259c80c3eebae4a1aada7967513
       />
       {/* <Cursors /> */}
       <Chat
