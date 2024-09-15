@@ -1,5 +1,6 @@
 // import { parseMarkdown } from "@/lib/renderer/parser";
 import { Message } from "../../lib/types";
+
 import "./messages.css";
 
 interface MessageParams {
@@ -9,7 +10,7 @@ interface MessageParams {
 const ChatMessage = ({ message }: MessageParams) => {
   return (
     <div
-      className={`m-2 mb-2 flex w-2/3 rounded-lg p-2 px-3 ${message.role === "user" ? "ml-auto justify-end bg-blue-500 text-white" : "mr-auto bg-gray-200 w-[90%]"}`}
+      className={`m-2 mb-2 flex w-fit max-w-[80%] rounded-lg p-2 px-3 ${message.role === "user" ? "ml-auto justify-end bg-blue-500 text-white" : "mr-auto w-[90%] bg-gray-200"}`}
     >
       {/* <div 
         className={`parser ${message.role === "user" && "dark"}`}
