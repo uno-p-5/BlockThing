@@ -3,13 +3,20 @@
 import { Cursor } from "@/lib/types";
 import { useEffect, useState } from "react";
 import  webSocketService from "../lib/wsmanager";
-import { randomUUID } from "crypto";
 
 const Cursors = () => {
 
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
   const [cursors, setCursors] = useState<Cursor[]>([]);
-  let uuid = randomUUID();
+
+  function generateUUID(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = (crypto.getRandomValues(new Uint8Array(1))[0] & 0xf) >> (c === 'x' ? 0 : 1);
+      return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+    });
+  }
+
+  const uuid = generateUUID();
 
     useEffect(() => {
         let lastSentTime = 0; // Track the last time the message was sent
@@ -28,20 +35,26 @@ const Cursors = () => {
         };
       
         window.addEventListener("mousemove", logCursorPosition);
+
+        webSocketService.onMessage((json) => {
+            console.log(json);
+        });
       
         return () => {
           window.removeEventListener("mousemove", logCursorPosition);
         };
-      });
+    }, []);
     
-      useEffect(() => {
+    useEffect(() => {
         // console.log(cursor);
         webSocketService.sendMessage(cursor.x, cursor.y, uuid);
-      }, [cursor]);
+    }, [cursor]);
 
-      webSocketService.onMessage((data: any) => {
-        console.log(data);
-      });
+    // useEffect(() => {
+    //     webSocketService.onMessage((json) => {
+    //         console.log(json);
+    //     });
+    // }, []);
 
     return ( 
         <div className="absolute h-screen w-screen pointer-events-none">

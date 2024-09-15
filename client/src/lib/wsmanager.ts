@@ -1,6 +1,6 @@
 export class WebSocketService {
   private socket: WebSocket | undefined;
-  private onMessageCallback: ((data: any) => void) | undefined;
+  private onMessageCallback: ((json: any) => void) | undefined;
   private url: string;
   private maxRetries = 3;
   private retryCount = 0;
@@ -25,10 +25,10 @@ export class WebSocketService {
       }
     };
 
-    this.socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+    this.socket.onmessage = (event: any) => {
+      const data = JSON.parse(event);
       if (this.onMessageCallback) {
-        this.onMessageCallback(data.history);
+        this.onMessageCallback(data);
       }
     };
   }
@@ -47,10 +47,10 @@ export class WebSocketService {
     this.socket?.send(JSON.stringify({ 
       x: x,
       y: y,
-      uuid: uuid,
+      origin: uuid
     }));
   }
-  onMessage(callback: (data: any) => void) {
+  onMessage(callback: (json: any) => void) {
     this.onMessageCallback = callback;
   }
 }

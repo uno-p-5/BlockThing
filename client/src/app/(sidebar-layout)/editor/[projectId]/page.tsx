@@ -18,9 +18,9 @@ import { Chat } from "@/components/editor/Chat";
 import styles from "../../../../components/editor/editor.module.css";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-// import Cursors from "@/components/Cursors";
+import Cursors from "@/components/Cursors";
 const Editor = dynamic(() => import("@/components/editor/Editor"), { ssr: false });
-const Cursors = dynamic(() => import("@/components/Cursors"), { ssr: false });
+// const Cursors = dynamic(() => import("@/components/Cursors"), { ssr: false });
 
 export default function Page() {
   let initial_prompt: string | null;

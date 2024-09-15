@@ -25,6 +25,8 @@ def start():
     # app.ws_manager = ConnectionManager()
     app.active_cursors = {}
     app.status = "ACTIVE"
+    app.msg_queue  = asyncio.Queue()
+    asyncio.create_task(response_worker())
 
 @app.on_event("shutdown")
 def shutdown():
@@ -207,19 +209,35 @@ async def chat_connector(ws: WebSocket):
         while True:
             data = await ws.receive()
             data = json.loads(data["text"])
-            uuid = data["uuid"]
-            app.active_cursors[uuid] = {
+            app.active_cursors[str(ws)] = {
                 "x": data["x"],
                 "y": data["y"],
+                "origin": data["origin"]
             }
-
-            await ws.send_json(app.active_cursors)
-            await asyncio.sleep(0.5)
+            
+            await app.msg_queue.put(ws)
+            # resp = {
+            # "cursors": app.active_cursors
+            # }
+            # print(resp)
+            # ws.send_json(resp)
+            # await asyncio.sleep(0.5)
     except WebSocketDisconnect:
         del app.active_cursors[str(ws)]
         await ws.close()
     except Exception as e:
         print("ERR", e)
+
+
+async def response_worker():
+    while True: 
+        ws: WebSocket = await app.msg_queue.get()
+        resp = {
+            "cursors": app.active_cursors
+        }
+        print(resp)
+        ws.send_json(resp)
+        await asyncio.sleep(0.5)
 
 
 
