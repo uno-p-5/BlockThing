@@ -1,0 +1,1 @@
+A server that serves a Python application with a console and interactive gui if needed. Written with Pyodide

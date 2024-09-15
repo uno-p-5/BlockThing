@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #2e2e2e;
+            color: #d4d4d4;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        #console {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            height: 400px;
+            width: 80%;
+            overflow-y: scroll;
+            margin-top: 20px;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+        /* Tab System Styles */
+        #tab-bar {
+            display: flex;
+            width: 80%;
+            border-bottom: 1px solid #555;
+            margin-top: 20px;
+            background-color: #3e3e3e;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #3e3e3e;
+            border: 1px solid #555;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 2px;
+            user-select: none;
+        }
+        .tab.active {
+            background-color: #1e1e1e;
+            font-weight: bold;
+        }
+        .window {
+            display: none;
+            width: 800px;
+            height: 600px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            margin-top: -1px;
+            background-color: #000;
+        }
+        .window.active {
+            display: block;
+        }
+    </style>
+    <!-- Using Pyodide v0.26.2 as per your request -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+    <!-- JSZip library inclusion without integrity attribute -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <h1>Pyodide Runner</h1>
+    
+    <!-- Tab Bar -->
+    <div id="tab-bar"></div>
+    
+    <!-- Console for Output -->
+    <div id="console"></div>
+    
+    <!-- Container for Windows -->
+    <div id="windows-container"></div>
+    
+    <script>
+        // Function to append text to the console with optional color
+        function appendToConsole(text, color = '#d4d4d4') {
+            const consoleElement = document.getElementById('console');
+            const span = document.createElement('span');
+            span.style.color = color;
+            span.textContent = text + '\n';
+            consoleElement.appendChild(span);
+            consoleElement.scrollTop = consoleElement.scrollHeight;
+        }
+        globalThis.appendToConsole = appendToConsole; // Make it accessible globally
+
+        // Tab Management
+        const tabBar = document.getElementById('tab-bar');
+        const windowsContainer = document.getElementById('windows-container');
+        let windowCount = 0;
+
+        // Function to create a new window with a tab
+        function createWindow(title, isCanvas = false) {
+            windowCount++;
+            const windowId = `window-${windowCount}`;
+            const tabId = `tab-${windowCount}`;
+
+            // Create Tab
+            const tab = document.createElement('div');
+            tab.className = 'tab';
+            tab.id = tabId;
+            tab.textContent = title || `Window ${windowCount}`;
+            tabBar.appendChild(tab);
+
+            // Create Window
+            const windowDiv = document.createElement('div');
+            windowDiv.className = 'window';
+            windowDiv.id = windowId;
+            windowsContainer.appendChild(windowDiv);
+
+            if (isCanvas) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 800;
+                canvas.height = 600;
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvas.style.backgroundColor = '#000';
+                canvas.id = "canvas";
+                windowDiv.appendChild(canvas);
+            }
+
+            // Event Listener for Tab Click
+            tab.addEventListener('click', () => {
+                // Deactivate all tabs and windows
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
+
+                // Activate the clicked tab and its window
+                tab.classList.add('active');
+                windowDiv.classList.add('active');
+
+                // If this window has a Canvas, set it as the active Canvas
+                const canvas = windowDiv.querySelector('canvas');
+                if (canvas && window.pyodide) {
+                    window.pyodide.canvas.setCanvas2D(canvas);
+                }
+            });
+
+            // Activate the new tab and window
+            tab.click();
+
+            return windowDiv;
+        }
+
+        // Function to create a new Canvas in a new window
+        function createCanvasWindow(title) {
+            const windowDiv = createWindow(title, true);
+            return windowDiv.querySelector('canvas');
+        }
+
+        // Expose the createCanvasWindow function to Python
+        globalThis.createCanvasWindow = createCanvasWindow;
+
+        async function main() {
+            appendToConsole('Launching a fresh instance of Pyodide...');
+            let pyodide = await loadPyodide();
+            window.pyodide = pyodide; // Make pyodide globally accessible
+            appendToConsole('Pyodide loaded.');
+
+            // Load micropip
+            appendToConsole("Loading micropip...");
+            await pyodide.loadPackage('micropip');
+            appendToConsole("Micropip loaded.");
+
+            // Install pygame-ce
+            appendToConsole('Installing modules...');
+            try {
+                await pyodide.runPythonAsync(`
+import micropip
+await micropip.install(['pygame-ce'])
+                `);
+                appendToConsole('Installing loaded.');
+            } catch (e) {
+                appendToConsole(`Failed to install pygame-ce: ${e.message || e}`, '#ff6666');
+                return;
+            }
+
+            // Get the Python working directory
+            let pythonCwd = pyodide.runPython('import os; os.getcwd()');
+            appendToConsole(`Python working directory: ${pythonCwd}`);
+
+            // Create 'run' directory in Python
+            pyodide.runPython(`
+import os
+run_dir = os.path.join(os.getcwd(), 'run')
+try:
+    os.mkdir(run_dir)
+except FileExistsError:
+    pass
+print(f"'run' directory created at: {run_dir}")
+            `);
+
+            // Fetch the bundled ZIP file from the server
+            appendToConsole('Fetching file bundle from server...');
+            let response = await fetch('/getFileBundle');
+            if (!response.ok) {
+                appendToConsole('Failed to fetch file bundle.', '#ff6666');
+                return;
+            }
+            let zipBlob = await response.blob();
+            appendToConsole('File bundle fetched.');
+
+            // Load and process the ZIP file using JSZip
+            appendToConsole('Processing ZIP bundle...');
+            let zip = await JSZip.loadAsync(zipBlob);
+            appendToConsole('ZIP bundle loaded.');
+
+            // Separate directories and files
+            let directories = [];
+            let files = [];
+            zip.forEach((relativePath, zipEntry) => {
+                if (zipEntry.dir) {
+                    // Remove trailing slash if present
+                    let dirPath = relativePath.endsWith('/') ? relativePath.slice(0, -1) : relativePath;
+                    directories.push(dirPath);
+                } else {
+                    files.push(zipEntry);
+                }
+            });
+
+            // Sort directories by depth (number of slashes), shallowest first
+            directories.sort((a, b) => a.split('/').length - b.split('/').length);
+
+            // Function to create directories sequentially
+            async function createDirectories() {
+                for (let dir of directories) {
+                    let targetDir = `${pythonCwd}/run/${dir}`;
+                    try {
+                        // Check if directory already exists
+                        try {
+                            let stat = pyodide.FS.stat(targetDir);
+                            if (!pyodide.FS.isDir(stat.mode)) {
+                                appendToConsole(`Path exists and is not a directory: ${dir}`, '#ff6666');
+                                throw new Error(`Path exists and is not a directory: ${dir}`);
+                            } else {
+                                appendToConsole(`Directory already exists: ${dir}`);
+                            }
+                        } catch (e) {
+                            // Directory does not exist, create it
+                            pyodide.FS.mkdir(targetDir);
+                            appendToConsole(`Directory created: ${dir}`);
+                        }
+                    } catch (e) {
+                        appendToConsole(`Failed to create directory ${dir}: ${e.message || e}`, '#ff6666');
+                        throw e;
+                    }
+                }
+            }
+
+            // Function to load a single file into Pyodide's filesystem
+            async function loadFile(zipEntry) {
+                try {
+                    let fileData = await zipEntry.async('uint8array');
+                    let targetPath = `${pythonCwd}/run/${zipEntry.name}`;
+                    pyodide.FS.writeFile(targetPath, fileData);
+                    appendToConsole(`Loaded file: ${zipEntry.name}`);
+                } catch (e) {
+                    appendToConsole(`Error loading file ${zipEntry.name}: ${e.message || e.toString()}`, '#ff6666');
+                    throw e;
+                }
+            }
+
+            // Create directories first
+            try {
+                await createDirectories();
+                appendToConsole('All directories created.');
+            } catch (e) {
+                appendToConsole('Error creating directories. Aborting file loading.', '#ff6666');
+                return;
+            }
+
+            // Load all files with multithreading (asynchronous operations)
+            appendToConsole('Loading files into Pyodide...');
+            const fileLoadPromises = files.map(fileEntry => loadFile(fileEntry));
+            try {
+                await Promise.all(fileLoadPromises);
+                appendToConsole('All files loaded into Pyodide.');
+            } catch (e) {
+                appendToConsole('Error loading some files.', '#ff6666');
+                return;
+            }
+
+            // Redirect stdout and stderr
+            pyodide.runPython(`
+import sys
+from js import appendToConsole
+
+class StdoutWriter:
+    def __init__(self):
+        self.buffer = ''
+    def write(self, text):
+        self.buffer += text
+        if '\\n' in self.buffer:
+            lines = self.buffer.split('\\n')
+            for line in lines[:-1]:
+                appendToConsole(line)
+            self.buffer = lines[-1]
+    def flush(self):
+        if self.buffer:
+            appendToConsole(self.buffer)
+            self.buffer = ''
+
+class StderrWriter:
+    def __init__(self):
+        self.buffer = ''
+    def write(self, text):
+        self.buffer += text
+        if '\\n' in self.buffer:
+            lines = self.buffer.split('\\n')
+            for line in lines[:-1]:
+                appendToConsole(line, '#ff6666')  # Light red for errors
+            self.buffer = lines[-1]
+    def flush(self):
+        if self.buffer:
+            appendToConsole(self.buffer, '#ff6666')
+            self.buffer = ''
+
+sys.stdout = StdoutWriter()
+sys.stderr = StderrWriter()
+            `);
+
+            appendToConsole("Changing working directory to 'run'...");
+
+            // Change the working directory to 'run' and list files
+            pyodide.runPython(`
+import os
+import sys
+os.chdir('run')
+cwd = os.getcwd()
+print(f"Current Working Directory: {cwd}")
+
+# Add current directory to sys.path
+if '' not in sys.path:
+    sys.path.insert(0, '')
+    print("Added '' to sys.path")
+`);
+
+            // Create the initial Pygame Canvas window and connect it
+            appendToConsole('Creating initial pygame-ce window...');
+            const initialCanvas = createCanvasWindow("Initial Pygame Window");
+            pyodide.canvas.setCanvas2D(initialCanvas);
+            appendToConsole('Initial Canvas connected to Pyodide.');
+
+            // Run project.py
+            appendToConsole('Running project.py...');
+            try {
+                await pyodide.runPythonAsync(`
+# import runpy
+# runpy.run_path('project.py', run_name='__main__')
+import project
+await project.main()`);
+                appendToConsole('project.py execution completed.');
+            } catch (error) {
+                appendToConsole('project.py execution was terminated due to an error.', '#ff6666');
+                appendToConsole('Error during execution:', '#ff6666');
+                appendToConsole(error.toString(), '#ff6666');
+            }
+        }
+
+        main();
+
+        // Optional: Catch unhandled promise rejections and display them
+        window.addEventListener('unhandledrejection', function(event) {
+            appendToConsole('Unhandled Promise Rejection: ' + event.reason.toString(), '#ff6666');
+        });
+    </script>
+</body>
+</html>
