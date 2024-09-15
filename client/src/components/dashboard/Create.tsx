@@ -13,12 +13,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useMutation } from "convex/react";
-import { MicIcon, PlusIcon, SparklesIcon } from "lucide-react";
+import { Mic, MicIcon, PlusIcon, SparklesIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { api } from "../../../convex/_generated/api";
 import { Button } from "../ui/button";
+import { AudioManager } from "../whisper/AudioManager";
+import { useTranscriber } from "../whisper/hooks/useTranscriber";
+import Transcript from "../whisper/Transcript";
 
 export function Create() {
   const [hovered, setHovered] = useState(false);
@@ -27,15 +30,15 @@ export function Create() {
     setHovered(true);
   };
 
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
+  // const handleMouseLeave = () => {
+  //   setHovered(false);
+  // };
 
   return (
     <div
       className="flex max-h-fit max-w-fit hover:cursor-pointer"
       onMouseOver={handleMouseOver}
-      onMouseLeave={handleMouseLeave}
+      // onMouseLeave={handleMouseLeave}
     >
       {hovered ? (
         <div className="flex h-40 max-h-40 w-80 max-w-80 flex-row space-x-2">
@@ -99,6 +102,10 @@ const CreateNew = ({
     setPrompt(e.currentTarget.value);
   };
 
+  const handlePromptChangeString = (input: string) => {
+    setPrompt(input);
+  };
+
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       setHovered(false);
@@ -110,9 +117,15 @@ const CreateNew = ({
     setHovered(false);
   };
 
+  const transcriber = useTranscriber();
+  const [showAudio, setShowAudio] = useState(false);
+
   return (
     <>
-      <Dialog onOpenChange={handleOpenChange}>
+      <Dialog
+        onOpenChange={handleOpenChange}
+        modal={false}
+      >
         <DialogTrigger className="h-full min-h-full">
           <div className="flex-center h-[68px]">
             <SparklesIcon className="h-8 w-[100%]" />
@@ -120,7 +133,7 @@ const CreateNew = ({
 
           <p className="font-semibold leading-tight">New Project</p>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="z-[999]">
           <DialogHeader>
             <DialogTitle>Create New Project</DialogTitle>
             <DialogDescription>
@@ -131,9 +144,19 @@ const CreateNew = ({
                     placeholder="Be Creative!"
                     type="url"
                     onChange={handlePromptChange}
+                    value={prompt}
                   />
-                  <Button variant={"secondary"}>
-                    <MicIcon />
+
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className={cn(
+                      "my-auto aspect-square size-10 w-10 min-w-10 max-w-10 rounded-full bg-background p-0",
+                      showAudio && "ring-2 ring-green-600"
+                    )}
+                    onClick={() => setShowAudio((p) => !p)}
+                  >
+                    <Mic className="size-4" />
                   </Button>
                 </div>
 
@@ -144,6 +167,14 @@ const CreateNew = ({
                 >
                   Submit
                 </Button>
+
+                <div className={cn("mb-4", !showAudio && "hidden")}>
+                  <Transcript transcribedData={transcriber.output} />
+                  <AudioManager
+                    transcriber={transcriber}
+                    setInput={handlePromptChangeString}
+                  />
+                </div>
               </div>
             </DialogDescription>
           </DialogHeader>
