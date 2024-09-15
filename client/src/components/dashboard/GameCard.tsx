@@ -34,7 +34,7 @@ export function GameCard({ game }: GameCardProps) {
   return (
     <Link
       href={`/editor/${game?._id}`}
-      className="flex max-h-fit w-full min-w-fit"
+      className="flex max-h-fit w-fit min-w-fit"
     >
       <div
         className={cn(
