@@ -29,7 +29,7 @@ export default function Page() {
 
         <div className="flex flex-row space-x-4 p-1">
           <Create />
-          <div className="flex w-full max-w-full snap-x space-x-4 overflow-x-auto p-1">
+          <div className="flex w-full max-w-full space-x-4 overflow-x-auto p-1">
             {(projects || []).map((game) => {
               return (
                 <GameCard
