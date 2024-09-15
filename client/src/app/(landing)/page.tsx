@@ -1,8 +1,6 @@
 "use client";
 
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
-import { HeroParallax } from "@/components/ui/hero-parallax";
-import { ThemeProvider } from "next-themes";
 import Image from "next/image";
 
 import Navbar from "./_components/nav";
@@ -11,6 +9,7 @@ import bool_nan from "/public/bool_nan.png";
 import foobar from "/public/foobar.png";
 import my_func from "/public/my_func.png";
 import splash from "/public/splash.png";
+import splash2 from "/public/splash2.png";
 
 export default function LandingPage() {
   return (
@@ -20,7 +19,7 @@ export default function LandingPage() {
         <div>
           <ContainerScroll titleComponent={<TitleComponent />}>
             <Image
-              src={splash}
+              src={splash2}
               alt="splash of editor"
               width={1200}
               height={1135}
@@ -62,7 +61,7 @@ const TitleComponent = () => {
         </span>
         , and the{" "}
         <span className="text-[#2463EB]">
-          capability of <b>OpenAI o1</b>
+          power of <b>OpenAI o1</b>
         </span>
       </h2>
     </div>
