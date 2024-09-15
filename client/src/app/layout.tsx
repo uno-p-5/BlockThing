@@ -5,6 +5,7 @@ import "./globals.css";
 
 import { ConvexClientProvider } from "@/components/providers/auth-provider";
 import { EdgeStoreProvider } from "@/lib/edgestore";
+import { ThemeProvider } from "next-themes";
 
 import { EditorScripts } from "../components/editor/EditorScripts";
 
@@ -32,6 +33,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <EditorScripts />
+      {/* <ThemeProvider
+        attribute="class"
+        // defaultTheme="light"
+        // enableSystem
+        disableTransitionOnChange
+      > */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -39,6 +46,7 @@ export default function RootLayout({
           <ConvexClientProvider>{children}</ConvexClientProvider>
         </EdgeStoreProvider>
       </body>
+      {/* </ThemeProvider> */}
     </html>
   );
 }

@@ -1,62 +1,53 @@
 "use client";
 
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
-import { Separator } from "@/components/ui/separator";
+import { HeroParallax } from "@/components/ui/hero-parallax";
+import { ThemeProvider } from "next-themes";
 import Image from "next/image";
 
 import Navbar from "./_components/nav";
+import { Parallax } from "./_components/parallax";
 import bool_nan from "/public/bool_nan.png";
 import foobar from "/public/foobar.png";
 import my_func from "/public/my_func.png";
 import splash from "/public/splash.png";
 
-const LandingPage = () => {
+export default function LandingPage() {
   return (
-    <div className="relative overflow-x-hidden bg-slate-50">
-      <Navbar />
-
-      <div>
-        <ContainerScroll titleComponent={<TitleComponent />}>
+    <>
+      <div className="relative overflow-x-hidden bg-slate-50">
+        <Navbar />
+        <div>
+          <ContainerScroll titleComponent={<TitleComponent />}>
+            <Image
+              src={splash}
+              alt="splash of editor"
+              width={1200}
+              height={1135}
+            />
+          </ContainerScroll>
           <Image
-            src={splash}
-            alt="splash of editor"
-            width={1200}
-            height={1135}
+            src={bool_nan}
+            alt={"bool of NaN"}
+            className="absolute -right-20 top-40"
           />
-        </ContainerScroll>
-        <Image
-          src={bool_nan}
-          alt={"bool of NaN"}
-          className="absolute -right-20 top-40"
-        />
-        <Image
-          src={my_func}
-          alt={"my func"}
-          className="absolute -left-32 top-80 rotate-12"
-        />
-        <Image
-          src={foobar}
-          alt={"if foo, 'bar"}
-          className="absolute -right-20 top-[36rem] -rotate-12"
-        />
+          <Image
+            src={my_func}
+            alt={"my func"}
+            className="absolute -left-32 top-80 rotate-12"
+          />
+          <Image
+            src={foobar}
+            alt={"if foo, 'bar"}
+            className="absolute -right-20 top-[36rem] -rotate-12"
+          />
+        </div>
       </div>
 
-      <div className="-mt-60 h-[100dvh] bg-[#2D2D2D] px-40 py-20 text-slate-50">
-        <p className="text-4xl font-semibold">
-          {"~"}43% of U.S. high schools{" "}
-          <span className="text-red-500 underline underline-offset-2">
-            lack
-          </span>{" "}
-          Computer Science courses
-        </p>
-
-        <p></p>
-      </div>
-    </div>
+      <Parallax />
+    </>
   );
-};
-
-export default LandingPage;
+}
 
 const TitleComponent = () => {
   return (
