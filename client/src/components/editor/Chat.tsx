@@ -73,6 +73,8 @@ export const Chat = ({
     }
 
     let model = '4o';
+    let botMessage = "";
+    let codeMessage = "";
     if (init) {
       model = 'o1';
     }
@@ -83,7 +85,7 @@ export const Chat = ({
     ]);
 
     try {
-      const response = await fetch(`/pyapi/llm/${model}`, {
+      const response = await fetch(`http://localhost:8080/llm/${model}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,43 +103,33 @@ export const Chat = ({
         return;
       }
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-      let botMessage = "";
-      let codeMessage = "";
-
-      // Append an empty message from the bot to the messages
       setMessages((prevMessages) => [
         ...prevMessages,
         { role: "assistant", content: "" },
       ]);
 
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-
-        if (value) {
-          const chunk = decoder.decode(value, { stream: true });
-
-          botMessage += chunk;
-
-          if (init) {
-            if (botMessage.includes("CODE")) {
-              codeMessage = botMessage.slice(botMessage.indexOf("CODE") + 5, botMessage.indexOf("ENDCODE"));
-              codeMessage.replace('```python', '');
-              codeMessage.replace('```', '');
-              botMessage = botMessage.slice(botMessage.indexOf("EXPLANATION") + 12, botMessage.indexOf("CODE"));
-            }
+      if (init) {
+        console.log(response.body);
+        let botMessage = await response.text();
+          console.log("IBM", botMessage);
+          if (botMessage.includes("CODE")) {
+            codeMessage = botMessage.slice(botMessage.indexOf("CODE") + 5, botMessage.indexOf("ENDCODE"));
+            botMessage = botMessage.slice(botMessage.indexOf("EXPLANATION") + 12, botMessage.indexOf("CODE"));
           }
+          // console.log("CM", codeMessage)
+          // console.log("BM", botMessage);
 
-          // Update the last message in messages
+          codeMessage.replace('```python', '');
+          codeMessage.replace('```', '');
+          // console.log(codeMessage);
+          setCode(codeMessage);
+
           setMessages((prevMessages) => {
             const updatedMessages = [...prevMessages];
             updatedMessages[updatedMessages.length - 1].content = botMessage;
             return updatedMessages;
           });
-          
+
           updateProject({
             project_id: projId,
             chat_history: [
@@ -145,18 +137,48 @@ export const Chat = ({
               { role: "user", content: msg },
               { role: "model", content: botMessage },
             ],
+          }).then((_) => {
+            router.replace(`/editor/${projId}`);
           });
+      } else {
 
-          if (init) {
-            if (codeMessage) {
-              codeMessage.replace('```python', '');
-              codeMessage.replace('```', '');
-              console.log(codeMessage);
-              setCode(codeMessage);
-            }
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+
+        // Append an empty message from the bot to the messages
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { role: "assistant", content: "" },
+        ]);
+
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+
+          if (value) {
+            const chunk = decoder.decode(value, { stream: true });
+
+            botMessage += chunk;
+
+            // Update the last message in messages
+            setMessages((prevMessages) => {
+              const updatedMessages = [...prevMessages];
+              updatedMessages[updatedMessages.length - 1].content = botMessage;
+              return updatedMessages;
+            });
+
+            updateProject({
+              project_id: projId,
+              chat_history: [
+                ...messages,
+                { role: "user", content: msg },
+                { role: "model", content: botMessage },
+              ],
+            }).then((_) => {
+              router.replace(`/editor/${projId}`);
+            });
           }
-
-          router.replace(`/editor/${projId}`);
         }
       }
 

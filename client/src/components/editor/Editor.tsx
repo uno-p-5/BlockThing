@@ -41,17 +41,10 @@ export default function Editor({ code, setCode, projectId }: EditorProps) {
       setCode(projectData.code);
       editor?.setCode(projectData.code);
     }
-  }, [projectData, editor]);
+  }, [projectData, editor, code]);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      const currentCode = editor?.getCode();
-  
-      if (currentCode !== code) {
-        setCode(currentCode || "");
-      }
-    }, 1000);
-    return () => clearInterval(intervalId);
+    editor?.setCode(code);
   }, [code]);
   
   // useEffect(() => {
@@ -76,10 +69,10 @@ export default function Editor({ code, setCode, projectId }: EditorProps) {
   };
 
   const handleSave = () => {
-    if (code) {
+    if (editor?.getCode()) {
       updateProject({
         project_id: projId,
-        code: code,
+        code: editor.getCode(),
       });
     }
     setSaveMsg(

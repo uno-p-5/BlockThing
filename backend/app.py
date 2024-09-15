@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from stream_page import STREAM_PAGE
 from fastapi.middleware.cors import CORSMiddleware
 from oai_configs import O1_SYSTEM_PROMPT, GPT4O_SYSTEM_PROMPT
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, StreamingResponse, PlainTextResponse
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 ###############################################
 
@@ -172,9 +172,9 @@ async def llm_o1(request: Request):
         "content": O1_SYSTEM_PROMPT(body["messages"][0]["content"])
     }]
 
-    print(messages)
-
-    def event_generator():
+    # print(messages)
+    print("Rcv O1 Request")
+    def get_msg():
         try:
             response = openai.chat.completions.create(
                 model='o1-preview',
@@ -189,13 +189,15 @@ async def llm_o1(request: Request):
             #         print(content, end='')
             #         yield content
             content = response.choices[0].message.content
-            print(content)
-            yield content
+            # print(content)
+            # print("Responded with o1")
+            return content
         except Exception as e:
-            yield 'Model ran into an error!'
+            return 'I ran into an error! Please try again later!'
             print(f"Error: {e}")
 
-    return StreamingResponse(event_generator(), media_type='text/plain', headers={'Connection': 'keep-alive'})
+    # print("Satisfying Request!")
+    return PlainTextResponse(get_msg(), media_type='text/plain')
 
 
 

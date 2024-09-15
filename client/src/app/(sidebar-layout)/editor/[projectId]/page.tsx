@@ -37,7 +37,8 @@ export default function Page() {
 
   const [code, setCode] = useState("");
 
-  const initial_prompt_encoded = projectId || null;
+  const sparams = useSearchParams();
+  const initial_prompt_encoded = sparams.get("prompt")
   if (
     !initial_prompt_encoded ||
     initial_prompt_encoded === "" ||
