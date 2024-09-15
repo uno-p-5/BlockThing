@@ -1,14 +1,15 @@
 ###############################################
 import os
 import json
-import asyncio
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse, StreamingResponse
-from fastapi.middleware.cors import CORSMiddleware
-from stream_page import STREAM_PAGE
-from dotenv import load_dotenv
-from sockets import ConnectionManager
 import openai
+import asyncio
+from dotenv import load_dotenv
+from stream_page import STREAM_PAGE
+from sockets import ConnectionManager
+from fastapi.middleware.cors import CORSMiddleware
+from oai_configs import O1_SYSTEM_PROMPT, GPT4O_SYSTEM_PROMPT
+from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 ###############################################
 
 ###############################################
@@ -33,6 +34,11 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
+
+###############################################
+# Utility
+async def get_body(request: Request) -> dict:
+    return json.loads((await request.body()).decode('utf-8'))
 
 
 
@@ -61,16 +67,14 @@ async def test_page(request: Request):
 ###############################################
 @app.post("/llm/embedding")
 async def embedding_api(request: Request):
-    body = json.loads((await request.body()).decode('utf-8'))
+    body = get_body(request)
 
     embedding = openai.embeddings.create(
         model="text-embedding-3-small",
         input=body["to_embed"],
         encoding_format="float"
     )
-    return {
-        "embedding": embedding
-    }
+    return { "embedding": embedding }
 
 
 
@@ -79,14 +83,55 @@ async def embedding_api(request: Request):
 ###############################################
 @app.post("/llm/o1")
 async def llm_o1(request: Request):
+    body = get_body(request)
+    
+    messages = [{
+        "role": "system",
+        "content": O1_SYSTEM_PROMPT
+    }]
+    if body["messages"]:
+        messages.extend(body["messages"])
+
     def event_generator():
         try:
             response = openai.chat.completions.create(
                 model='gpt-4o', # 'o1-preview'
-                messages=[
-                    {"role": "system", "content": "You are an SEO expert."},
-                    {"role": "user", "content": "Write a paragraph about no-code tools to build in 2021."}
-                ],
+                messages=messages,
+                stream=True,
+            )
+
+            for chunk in response:
+                content = chunk.choices[0].delta.content 
+                if content:
+                    print(content, end='')
+                    yield content
+        except Exception as e:
+            yield 'Model ran into an error!'
+            print(f"Error: {e}")
+
+    return StreamingResponse(event_generator(), media_type='text/plain', headers={'Connection': 'keep-alive'})
+
+
+
+###############################################
+# OpenAI gpt-4o Runner
+###############################################
+@app.post("/llm/4o")
+async def llm_o1(request: Request):
+    body = get_body(request)
+    
+    messages = [{
+        "role": "system",
+        "content": O1_SYSTEM_PROMPT
+    }]
+    if body["messages"]:
+        messages.extend(body["messages"])
+        
+    def event_generator():
+        try:
+            response = openai.chat.completions.create(
+                model='gpt-4o',
+                messages=messages,
                 stream=True,
             )
 
