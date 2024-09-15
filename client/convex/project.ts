@@ -2,15 +2,16 @@ import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const getCurrentProject = query({
-    args: { projectId: v.string() }, 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handler: async (ctx, args) => {
-        const userId = await ctx.auth.getUserIdentity();
-        if (!userId) {
+    args: { projectId: v.string() },
+    handler: async (context, args) => {  
+        const identity = await context.auth.getUserIdentity();  
+
+        if (!identity) {
             throw new Error('Not Authenticated');
         }
-        const proj = await ctx.db.query('project')
-            .filter((q) => q.eq("_id", args.projectId))
+
+        const proj = await context.db.query('project')
+            .filter(q => q.eq(q.field("_id"), args.projectId)) 
             .first();
 
         return proj; 
@@ -31,6 +32,7 @@ export const createProject = mutation({
             creator: userId.subject,
             name: args.name,
             description: args.description,
+            chat_history: [],
         });
         return proj;
     }
@@ -98,6 +100,7 @@ export const update = mutation({
         code: v.optional(v.string()),
         description: v.optional(v.string()),
         embedding: v.optional(v.array(v.float64())),
+        chat_history: v.optional(v.array(v.any())),
     },
     handler: async (ctx, args) => {
         let existingDoc = await ctx.db.query("project")

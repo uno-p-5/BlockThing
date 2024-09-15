@@ -14,7 +14,15 @@ from oai_configs import O1_SYSTEM_PROMPT, GPT4O_SYSTEM_PROMPT
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, File, UploadFile, HTTPException
 
+import logging
+
 from browserpy.sb3topy.src.sb3topy import api as tp_api
+from browserpy.sb3topy.src.sb3topy.project import Manifest
+from browserpy.sb3topy.src.sb3topy.packer import save_code
+from browserpy.sb3topy.src.sb3topy.parser import parse_project
+from browserpy.sb3topy.src.sb3topy.unpacker import convert_assets
+
+from fastapi.responses import HTMLResponse, StreamingResponse, PlainTextResponse
 ###############################################
 
 ###############################################
@@ -143,8 +151,22 @@ async def embedding_api(request: Request):
 ###############################################
 @app.post("/file/download")
 async def download_file(request: Request):
+    print('hit')
     body = await get_body(request)
-    arr = bytearray(body["buf"])
+    buf_str = body["buf"]
+    
+    print(buf_str)
+    
+    uint8_array = buf_str.encode('utf-8')
+    
+    print(uint8_array)
+
+    # Step 3: Extract the ArrayBuffer (in Python terms, a buffer or memoryview)
+    array_buffer = memoryview(uint8_array)
+    
+    print(array_buffer)
+
+    arr = bytearray(array_buffer)
 
     with open(Path(DATA / f'{body["project_id"]}.sb3'), 'wb') as f:
         f.write(arr)
@@ -163,9 +185,9 @@ async def llm_o1(request: Request):
         "content": O1_SYSTEM_PROMPT(body["messages"][0]["content"])
     }]
 
-    print(messages)
-
-    def event_generator():
+    # print(messages)
+    print("Rcv O1 Request")
+    def get_msg():
         try:
             response = openai.chat.completions.create(
                 model='o1-preview',
@@ -180,13 +202,15 @@ async def llm_o1(request: Request):
             #         print(content, end='')
             #         yield content
             content = response.choices[0].message.content
-            print(content)
-            yield content
+            # print(content)
+            # print("Responded with o1")
+            return content
         except Exception as e:
-            yield 'Model ran into an error!'
+            return 'I ran into an error! Please try again later!'
             print(f"Error: {e}")
 
-    return StreamingResponse(event_generator(), media_type='text/plain', headers={'Connection': 'keep-alive'})
+    # print("Satisfying Request!")
+    return PlainTextResponse(get_msg(), media_type='text/plain')
 
 
 
@@ -278,20 +302,7 @@ async def ws_logger():
 ###############################################
 # Scratch transpiler
 ###############################################
-from fastapi import APIRouter, File, UploadFile, HTTPException
-from fastapi.responses import StreamingResponse
-import io
-import tempfile
-import logging
 
-# Import necessary modules
-from browserpy.sb3topy.src.sb3topy import api as tp_api
-from browserpy.sb3topy.src.sb3topy.project import Manifest
-from browserpy.sb3topy.src.sb3topy.packer import save_code
-from browserpy.sb3topy.src.sb3topy.parser import parse_project
-from browserpy.sb3topy.src.sb3topy.unpacker import convert_assets
-
-router = APIRouter()
 logger = logging.getLogger(__name__)
 
 @app.post("/transpile")

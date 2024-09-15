@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Message } from "@/lib/types";
 import { Mic, Send } from "lucide-react";
@@ -7,22 +7,36 @@ import { Mic, Send } from "lucide-react";
 import { Button } from "../ui/button";
 import ChatMessage from "./ChatMessage";
 import "./messages.css";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { useRouter } from "next/navigation";
 
 interface ChatParams {
   initialPrompt?: string | null;
   code: string;
   setCode: (code: string) => void;
+  project_id: string;
 }
 
 export const Chat = ({
   initialPrompt,
   code,
   setCode,
+  project_id: projId,
 }: ChatParams) => {
-  const [messages, setMessages] = useState<Message[]>(chatmsgs);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [prompt, setPrompt] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const projectData = useQuery(api.project.getCurrentProject, { projectId: projId });
+  const updateProject = useMutation(api.project.update);
+
+  useEffect(() => {
+    if (projectData && projectData?.chat_history && messages.length === 0) {
+      setMessages(projectData.chat_history);
+    }
+  }, [projectData]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -33,6 +47,7 @@ export const Chat = ({
     initialize();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -58,6 +73,8 @@ export const Chat = ({
     }
 
     let model = '4o';
+    let botMessage = "";
+    let codeMessage = "";
     if (init) {
       model = 'o1';
     }
@@ -68,7 +85,7 @@ export const Chat = ({
     ]);
 
     try {
-      const response = await fetch(`/pyapi/llm/${model}`, {
+      const response = await fetch(`http://localhost:8080/llm/${model}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -86,50 +103,81 @@ export const Chat = ({
         return;
       }
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-      let botMessage = "";
-      let codeMessage = "";
-
-      // Append an empty message from the bot to the messages
       setMessages((prevMessages) => [
         ...prevMessages,
         { role: "assistant", content: "" },
       ]);
 
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-
-        if (value) {
-          const chunk = decoder.decode(value, { stream: true });
-
-          botMessage += chunk;
-
-          if (init) {
-            if (botMessage.includes("CODE")) {
-              codeMessage = botMessage.slice(botMessage.indexOf("CODE") + 5, botMessage.indexOf("ENDCODE"));
-              codeMessage.replace('```python', '');
-              codeMessage.replace('```', '');
-              botMessage = botMessage.slice(botMessage.indexOf("EXPLANATION") + 12, botMessage.indexOf("CODE"));
-            }
+      if (init) {
+        console.log(response.body);
+        let botMessage = await response.text();
+          console.log("IBM", botMessage);
+          if (botMessage.includes("CODE")) {
+            codeMessage = botMessage.slice(botMessage.indexOf("CODE") + 5, botMessage.indexOf("ENDCODE"));
+            botMessage = botMessage.slice(botMessage.indexOf("EXPLANATION") + 12, botMessage.indexOf("CODE"));
           }
+          // console.log("CM", codeMessage)
+          // console.log("BM", botMessage);
 
-          // Update the last message in messages
+          codeMessage.replace('```python', '');
+          codeMessage.replace('```', '');
+          // console.log(codeMessage);
+          setCode(codeMessage);
+
           setMessages((prevMessages) => {
             const updatedMessages = [...prevMessages];
             updatedMessages[updatedMessages.length - 1].content = botMessage;
             return updatedMessages;
           });
 
-          if (init) {
-            if (codeMessage) {
-              codeMessage.replace('```python', '');
-              codeMessage.replace('```', '');
-              console.log(codeMessage);
-              setCode(codeMessage);
-            }
+          updateProject({
+            project_id: projId,
+            chat_history: [
+              ...messages,
+              { role: "user", content: msg },
+              { role: "model", content: botMessage },
+            ],
+          }).then((_) => {
+            router.replace(`/editor/${projId}`);
+          });
+      } else {
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+
+        // Append an empty message from the bot to the messages
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { role: "assistant", content: "" },
+        ]);
+
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+
+          if (value) {
+            const chunk = decoder.decode(value, { stream: true });
+
+            botMessage += chunk;
+
+            // Update the last message in messages
+            setMessages((prevMessages) => {
+              const updatedMessages = [...prevMessages];
+              updatedMessages[updatedMessages.length - 1].content = botMessage;
+              return updatedMessages;
+            });
+
+            updateProject({
+              project_id: projId,
+              chat_history: [
+                ...messages,
+                { role: "user", content: msg },
+                { role: "model", content: botMessage },
+              ],
+            }).then((_) => {
+              router.replace(`/editor/${projId}`);
+            });
           }
         }
       }
@@ -191,5 +239,3 @@ export const Chat = ({
     </div>
   );
 };
-
-const chatmsgs: Message[] = [];

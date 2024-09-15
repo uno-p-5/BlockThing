@@ -32,12 +32,13 @@ const Editor = dynamic(() => import("@/components/editor/Editor"), {
 
 export default function Page() {
   let initial_prompt: string | null;
-  const { projectId, scratchLink } = useParams();
+  const { projectId } = useParams();
   const project_id = Array.isArray(projectId) ? projectId[0] : projectId;
 
   const [code, setCode] = useState("");
 
-  const initial_prompt_encoded = projectId || null;
+  const sparams = useSearchParams();
+  const initial_prompt_encoded = sparams.get("prompt")
   if (
     !initial_prompt_encoded ||
     initial_prompt_encoded === "" ||
@@ -48,15 +49,19 @@ export default function Page() {
     initial_prompt = decodeURIComponent(initial_prompt_encoded as string);
   }
 
+  const searchParams = useSearchParams();
+  const scratchLink = searchParams.get("scratchLink");
+
+  const [tryAgain, setTryAgain] = useState(true);
   const [loadingScratch, setLoadingScratch] = useState(false);
-  const idMatch = decodeURIComponent(scratchLink)?.match(/projects\/(\d+)/); // ! fix me
+  const idMatch = decodeURIComponent(scratchLink || "")?.match(/projects\/(\d+)/); // ! fix me
 
   useEffect(() => {
     const handleImportScratch = async () => {
       setLoadingScratch(true);
+      setTryAgain(false);
 
       try {
-        console.log("it");
         const response = await fetch("/api/sbdl", {
           method: "POST",
           headers: {
@@ -71,13 +76,18 @@ export default function Page() {
           throw new Error("Failed to import Scratch project");
         }
 
-        const pythonResponse = await fetch("/file/download", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ data: response.json() }),
-        });
+        const jsonString = JSON.stringify((await response.json()).buf);
+
+        const pythonResponse = await fetch(
+          "http://localhost:8080/file/download",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ buf: jsonString, project_id: projectId }),
+          }
+        );
 
         console.log(pythonResponse);
       } catch (e) {
@@ -87,26 +97,26 @@ export default function Page() {
       }
     };
 
-    if (scratchLink && scratchLink !== "" && scratchLink !== null) {
+    if (scratchLink && scratchLink !== "" && scratchLink !== null && tryAgain) {
       handleImportScratch();
-      setLoadingScratch(false);
     }
-  }, [idMatch, scratchLink]);
+  }, [idMatch, scratchLink, tryAgain]);
 
   return (
     <div
       className={`flex h-full min-h-full w-full max-w-full flex-row justify-between space-x-8 bg-slate-50 px-8 py-8`}
     >
-      <Editor
-        code={code}
-        setCode={setCode}
-        projectId={project_id}
+      <Editor 
+        code={code} 
+        setCode={setCode} 
+        projectId={project_id} 
       />
       {/* <Cursors /> */}
       <Chat
         initialPrompt={initial_prompt}
         code={code}
         setCode={setCode}
+        project_id={project_id}
       />
 
       <Dialog

@@ -21,7 +21,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "BlockThingy",
+  title: "Block Thing",
   description: "Reinventing how we learn to code.",
 };
 

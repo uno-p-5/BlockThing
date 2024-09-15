@@ -9,6 +9,7 @@ import { gravityPlatformer } from "../../app/(sidebar-layout)/editor/test-data";
 import type { Editor, EditorConfiguration, ViewMode } from "./types";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import { Check, Save } from "lucide-react";
 
 declare global {
   interface Window {
@@ -31,44 +32,29 @@ export default function Editor({ code, setCode, projectId }: EditorProps) {
   const projectData = useQuery(api.project.getCurrentProject, { projectId: projId });
   const updateProject = useMutation(api.project.update);
   const [editor, setEditor] = useState<Editor>();
+  const [saveMsg, setSaveMsg] = useState(<span className="flex flex-row items-center"><Save className="h-4 w-4 mr-2" /> Save Code</span>);
   const [editorHeight, setEditorHeight] = useState(window.innerHeight - 112);
 
   useEffect(() => {
-    console.log(projectData);
     if (projectData && projectData?.code) {
+      console.log("HERE", projectData.code);
       setCode(projectData.code);
+      editor?.setCode(projectData.code);
     }
-  }, [projectData]);
+  }, [projectData, editor, code]);
 
   useEffect(() => {
-    // Set code based on project data or editor's current code at mount
-    if (code) {
-      // setCode(editor?.getCode() || "");
-      editor?.setCode(code);
-    }
+    editor?.setCode(code);
+  }, [code]);
   
-    // Set up an interval to regularly check the editor's code and sync it
-    const intervalId = setInterval(() => {
-      const currentCode = editor?.getCode();
-  
-      // Only update the state if the code is different, without resetting the cursor
-      if (currentCode !== code) {
-        setCode(currentCode || "");
-      }
-    }, 1000); // Adjust interval as needed (currently set to 1 second)
-  
-    // Clean up interval on unmount
-    return () => clearInterval(intervalId);
-  }, [code, editor, projectData]);
-  
-  useEffect(() => {
-    if (code) {
-      updateProject({
-        project_id: projId,
-        code: code,
-      });
-    }
-  }, [code, editor, projId]);
+  // useEffect(() => {
+  //   if (code) {
+  //     updateProject({
+  //       project_id: projId,
+  //       code: code,
+  //     });
+  //   }
+  // }, [code, editor, projId]);
   
 
   const handleChangeMode = (value: string) => {
@@ -82,13 +68,22 @@ export default function Editor({ code, setCode, projectId }: EditorProps) {
     }
   };
 
-  const handleInject = () => {
-    try {
-      editor?.setCode(gravityPlatformer);
-    } catch (e) {
-      // @ts-expect-error trust me bro
-      console.error("code injection failed", e.message);
+  const handleSave = () => {
+    if (editor?.getCode()) {
+      updateProject({
+        project_id: projId,
+        code: editor.getCode(),
+      });
     }
+    setSaveMsg(
+      <span className="flex flex-row items-center">
+        <Check className="h-4 w-4 mr-2" /> Saved!
+      </span>
+    );
+  
+    setTimeout(() => {
+      setSaveMsg(<span className="flex flex-row items-center"><Save className="h-4 w-4 mr-2" /> Save Code</span>);
+    }, 2000);
   };
 
   useEffect(() => {
@@ -158,7 +153,7 @@ export default function Editor({ code, setCode, projectId }: EditorProps) {
               )}
             />
           </div>
-          <Button onClick={handleInject}>Inject Code</Button>
+          <Button onClick={handleSave} className="h-9 min-h-0 py-1">{saveMsg}</Button>
         </div>
 
         <div
