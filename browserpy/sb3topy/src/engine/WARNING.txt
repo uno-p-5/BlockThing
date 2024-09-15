@@ -1,0 +1,1 @@
+The files in this directory will be deleted if the sb3topy converter is run again. All additional files and changes to existing files will be lost. If you want to prevent this from happening, set OVERWRITE_ENGINE to False in the configuration. Alternatively, you can create a file named 'DISABLE_OVERWRITE'to disable modifying these files.
