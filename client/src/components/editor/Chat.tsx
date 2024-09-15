@@ -108,7 +108,7 @@ export const Chat = ({
   };
 
   return (
-    <div className="max-h-full w-[400px] pt-12">
+    <div className="max-h-full w-[600px] pt-12">
       <div className="relative flex h-full flex-col gap-x-2 rounded-lg outline outline-[0.5px] outline-gray-300">
         <div className="overflow-y-auto">
           {messages.map((msg, idx) => (

@@ -119,7 +119,7 @@ export function Editor({
         <div
           id="blockmirror-editor"
           ref={blockMirrorRef}
-          className={`${styles.actvive} max-w-full`}
+          className={styles.active}
         />
 
         {!editor ? (
