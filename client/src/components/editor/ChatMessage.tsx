@@ -1,4 +1,4 @@
-import { parseMarkdown } from "@/lib/renderer/parser";
+// import { parseMarkdown } from "@/lib/renderer/parser";
 import { Message } from "../../lib/types";
 import "./messages.css";
 
@@ -11,10 +11,13 @@ const ChatMessage = ({ message }: MessageParams) => {
     <div
       className={`m-2 mb-2 flex w-2/3 rounded-lg p-2 px-3 ${message.role === "user" ? "ml-auto justify-end bg-blue-500 text-white" : "mr-auto bg-gray-200 w-[90%]"}`}
     >
-      <div 
+      {/* <div 
         className={`parser ${message.role === "user" && "dark"}`}
         dangerouslySetInnerHTML={{ __html: parseMarkdown(message.content) }}>
-      </div>
+      </div> */}
+      <p className="overflow-wrap whitespace-break-spaces break-words text-sm">
+        {message.content}
+      </p>
     </div>
   );
 };

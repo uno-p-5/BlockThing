@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { Message } from "@/lib/types";
 import { Mic, Send } from "lucide-react";
@@ -22,6 +22,7 @@ export const Chat = ({
   const [messages, setMessages] = useState<Message[]>(chatmsgs);
   const [prompt, setPrompt] = useState("");
   const [error, setError] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const initialize = async () => {
@@ -33,10 +34,32 @@ export const Chat = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      const container = scrollRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [messages]);
+
+//   useLayoutEffect(() => {
+//     if (scrollRef && scrollRef.current) {
+//         setTimeout(() => {
+//             if (scrollRef.current) {
+//                 scrollRef.current.scrollTop = scrollRef.current.scrollHeight + 100;
+//             }
+//         }, 100); 
+//     }
+// }, [messages]);
+
   const handleSendClick = async (msg: string, init: boolean = false) => {
     if (!prompt && !init) {
         setError("Please enter a message!");
         return;
+    }
+
+    let model = '4o';
+    if (init) {
+      model = 'o1';
     }
 
     setMessages((prevMessages) => [
@@ -45,7 +68,7 @@ export const Chat = ({
     ]);
 
     try {
-      const response = await fetch("/pyapi/llm/4o", {
+      const response = await fetch(`/pyapi/llm/${model}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +133,7 @@ export const Chat = ({
   return (
     <div className="max-h-full w-[600px] pt-12">
       <div className="relative flex h-full flex-col gap-x-2 rounded-lg outline outline-[0.5px] outline-gray-300">
-        <div className="overflow-y-auto">
+        <div className="overflow-y-auto" ref={scrollRef}>
           {messages.map((msg, idx) => (
             <ChatMessage
               key={idx}

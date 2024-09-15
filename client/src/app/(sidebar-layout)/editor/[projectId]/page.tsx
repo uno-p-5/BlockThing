@@ -11,15 +11,20 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Chat } from "@/components/editor/Chat";
 import { Editor } from "@/components/editor/Editor";
+import webSocketService from "../../../../lib/wsmanager";
+
+import styles from "../../../../components/editor/editor.module.css";
 import { useSearchParams } from "next/navigation";
+import { Cursor } from "@/lib/types";
 
 export default function Page() {
   let initial_prompt: string | null;
   const [code, setCode] = useState("");
+  // const [wsCursors, setWsCursors] = useState<Cursor[]>([]);
   const sparams = useSearchParams();
   const initial_prompt_encoded = sparams.get("prompt") || null;
   if (
@@ -32,10 +37,46 @@ export default function Page() {
     initial_prompt = decodeURIComponent(initial_prompt_encoded as string);
   }
 
+  console.log(styles) 
+
+  useEffect(() => {
+    const logCursorPosition = (event: MouseEvent) => {
+      const { clientX, clientY } = event;
+      console.log(`Cursor position: X=${clientX}, Y=${clientY}`);
+    };
+
+    window.addEventListener("mousemove", logCursorPosition);
+    return () => {
+      window.removeEventListener("mousemove", logCursorPosition);
+    };
+  }, []); 
+
+  useEffect(() => {
+    // webSocketService.onMessage((cursors: Cursor[]) => {
+    //   setMessages((prev) => {
+    //     const newMessages = prev.slice(0, -1);
+    //     const _messages = [
+    //       ...newMessages,
+    //       {
+    //         content: chatHistory.at(-1) || "Error, please try again later.",
+    //         isUser: false,
+    //         isFile: false,
+    //       },
+    //     ];
+    //     updateChat(chatId, undefined, _messages);
+    //     return _messages;
+    //   });
+    //   setResponseLoading(false);
+    // });
+  }, []);
+
+
+
   return (
     <div
       className={`flex h-full min-h-full w-full max-w-full flex-row justify-between space-x-8 bg-slate-50 px-8 py-8`}
     >
+      {/* <Cursors  */}
       <Editor />
 
       <Chat

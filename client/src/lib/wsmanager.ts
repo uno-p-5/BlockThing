@@ -1,7 +1,8 @@
+import { Cursor } from "./types";
 
 export class WebSocketService {
   private socket: WebSocket | undefined;
-  private onMessageCallback: ((chatHistory: string[]) => void) | undefined;
+  private onMessageCallback: ((cursors: Cursor[]) => void) | undefined;
   private url: string;
 //   private maxRetries = 3;
 //   private retryCount = 0;
@@ -53,6 +54,8 @@ export class WebSocketService {
     }));
   }
 
+  // trust me ;)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sendConfiguration(userId: string, config: string, payload?: any) {
     console.log("Sending configuration", config, "with payload", payload);
     this.socket?.send(JSON.stringify({
@@ -77,7 +80,7 @@ export class WebSocketService {
     reader.readAsArrayBuffer(file);
   }
 
-  onMessage(callback: (chatHistory: string[]) => void) {
+  onMessage(callback: (cursors: Cursor[]) => void) {
     this.onMessageCallback = callback;
   }
 }

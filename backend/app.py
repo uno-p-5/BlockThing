@@ -47,7 +47,7 @@ async def get_body(request: Request) -> dict:
 ###############################################
 @app.get("/")
 async def root(request: Request):
-    print(f"requested {request.url}")
+    # print(f"requested {request.url}")
     return {"message": "Hello from Block Thing"}
 
 
@@ -57,7 +57,7 @@ async def root(request: Request):
 ###############################################
 @app.get("/_test", response_class=HTMLResponse)
 async def test_page(request: Request):
-    print(f"requested {request.url}")
+    # print(f"requested {request.url}")
     return HTMLResponse(STREAM_PAGE)
 
 
@@ -86,25 +86,24 @@ async def llm_o1(request: Request):
     body = await get_body(request)
     
     messages = [{
-        "role": "system",
-        "content": O1_SYSTEM_PROMPT
+        "role": "user",
+        "content": O1_SYSTEM_PROMPT(body["messages"][0]["content"])
     }]
-    if body["messages"]:
-        messages.extend(body["messages"])
 
     def event_generator():
         try:
             response = openai.chat.completions.create(
-                model='gpt-4o', # 'o1-preview'
+                model='o1-preview', # 'gpt-4o',
                 messages=messages,
-                stream=True,
+                # stream=True,
             )
 
-            for chunk in response:
-                content = chunk.choices[0].delta.content 
-                if content:
-                    print(content, end='')
-                    yield content
+            # for chunk in response:
+            #     content = chunk.choices[0].delta.content 
+            #     if content:
+            #         print(content, end='')
+            #         yield content
+            yield response.choices[0].message.content
         except Exception as e:
             yield 'Model ran into an error!'
             print(f"Error: {e}")
@@ -117,7 +116,7 @@ async def llm_o1(request: Request):
 # OpenAI gpt-4o Runner
 ###############################################
 @app.post("/llm/4o")
-async def llm_o1(request: Request):
+async def llm_4o(request: Request):
     body = await get_body(request)
     
     messages = [{
@@ -125,8 +124,6 @@ async def llm_o1(request: Request):
         "content": GPT4O_SYSTEM_PROMPT
     }]
     messages += body["messages"]
-
-    print(messages)
         
     def event_generator():
         try:
@@ -139,7 +136,7 @@ async def llm_o1(request: Request):
             for chunk in response:
                 content = chunk.choices[0].delta.content 
                 if content:
-                    print(content, end='')
+                    # print(content, end='')
                     yield content
         except Exception as e:
             yield 'Model ran into an error!'
@@ -157,9 +154,10 @@ async def chat_connector(ws: WebSocket):
     await app.ws_manager.connect(ws)
     try:
         while True:
-            # data = await ws.receive_text()
-            # print(data)
-            # data = json.loads(data)
+            data = await ws.receive_text()
+            data = json.loads(data)
+
+            x, y = data['x'], data['y']
 
             await ws.send_text("Message sent every 5 seconds")
             await asyncio.sleep(1)
@@ -175,7 +173,7 @@ async def chat_connector(ws: WebSocket):
 ###############################################
 # WebSocket Logger
 ###############################################
-@app.get('/util/log')
+@app.get('/log/ws')
 async def ws_logger():
     return {
         "active_connections": app.ws_manager.active_connections,
