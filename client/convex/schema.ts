@@ -9,6 +9,7 @@ export default defineSchema({
         code: v.optional(v.string()),
         description: v.optional(v.string()),
         embedding: v.optional(v.array(v.float64())),
+        chat_history: v.array(v.any())
     })
     .index('byCreator', ['creator'])
     // .index('bySharedUsers', ['shared_users'])

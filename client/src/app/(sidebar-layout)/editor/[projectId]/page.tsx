@@ -48,12 +48,17 @@ export default function Page() {
     <div
       className={`flex h-full min-h-full w-full max-w-full flex-row justify-between space-x-8 bg-slate-50 px-8 py-8`}
     >
-      <Editor code={code} setCode={setCode} projectId={project_id} />
+      <Editor 
+        code={code} 
+        setCode={setCode} 
+        projectId={project_id} 
+      />
       {/* <Cursors /> */}
       <Chat
         initialPrompt={initial_prompt}
         code={code}
         setCode={setCode}
+        project_id={project_id}
       />
     </div>
   );

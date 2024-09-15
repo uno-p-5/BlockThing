@@ -7,22 +7,35 @@ import { Mic, Send } from "lucide-react";
 import { Button } from "../ui/button";
 import ChatMessage from "./ChatMessage";
 import "./messages.css";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { update } from "../../../convex/project";
 
 interface ChatParams {
   initialPrompt?: string | null;
   code: string;
   setCode: (code: string) => void;
+  project_id: string;
 }
 
 export const Chat = ({
   initialPrompt,
   code,
   setCode,
+  project_id: projId,
 }: ChatParams) => {
-  const [messages, setMessages] = useState<Message[]>(chatmsgs);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [prompt, setPrompt] = useState("");
   const [error, setError] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const projectData = useQuery(api.project.getCurrentProject, { projectId: projId });
+  const updateProject = useMutation(api.project.update);
+
+  useEffect(() => {
+    if (projectData && projectData?.chat_history && messages.length === 0) {
+      setMessages(projectData.chat_history);
+    }
+  }, [projectData]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -33,6 +46,7 @@ export const Chat = ({
     initialize();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -122,6 +136,15 @@ export const Chat = ({
             updatedMessages[updatedMessages.length - 1].content = botMessage;
             return updatedMessages;
           });
+          
+          updateProject({
+            project_id: projId,
+            chat_history: [
+              ...messages,
+              { role: "user", content: msg },
+              { role: "model", content: botMessage },
+            ],
+          });
 
           if (init) {
             if (codeMessage) {
@@ -191,5 +214,3 @@ export const Chat = ({
     </div>
   );
 };
-
-const chatmsgs: Message[] = [];
