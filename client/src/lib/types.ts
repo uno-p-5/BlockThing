@@ -1,5 +1,5 @@
 
 export type Message = {
-    message: string;
+    content: string;
     role: string;
 }

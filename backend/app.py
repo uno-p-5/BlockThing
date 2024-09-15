@@ -118,14 +118,15 @@ async def llm_o1(request: Request):
 ###############################################
 @app.post("/llm/4o")
 async def llm_o1(request: Request):
-    body = get_body(request)
+    body = await get_body(request)
     
     messages = [{
         "role": "system",
-        "content": O1_SYSTEM_PROMPT
+        "content": GPT4O_SYSTEM_PROMPT
     }]
-    if body["messages"]:
-        messages.extend(body["messages"])
+    messages += body["messages"]
+
+    print(messages)
         
     def event_generator():
         try:

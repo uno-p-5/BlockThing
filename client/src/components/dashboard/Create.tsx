@@ -118,17 +118,17 @@ const CreateNew = ({
             <SparklesIcon className="h-8 w-[100%]" />
           </div>
 
-          <p className="font-semibold leading-tight">Create new project</p>
+          <p className="font-semibold leading-tight">New Project</p>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create new project</DialogTitle>
+            <DialogTitle>Create New Project</DialogTitle>
             <DialogDescription>
-              What do you want to build today?
+              What kind of project do you want to create? Describe it!
               <div className="flex w-full flex-col justify-end space-y-4 pt-4">
                 <div className="flex flex-row space-x-2">
                   <Input
-                    placeholder="Describe your project! Be Creative!"
+                    placeholder="Be Creative!"
                     type="url"
                     onChange={handlePromptChange}
                   />
@@ -194,10 +194,10 @@ const FromScratch = ({
         <DialogHeader>
           <DialogTitle>Import from Scratch</DialogTitle>
           <DialogDescription>
-            Paste in the public URL of your project
+            Paste in the Public URL of your Scratch Project
             <div className="flex w-full flex-col justify-end space-y-4 pt-4">
               <Input
-                placeholder="...public Scratch link"
+                placeholder="Link here..."
                 type="url"
                 onChange={handleScratchChange}
               />

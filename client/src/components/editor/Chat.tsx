@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Message } from "@/lib/types";
 import { Mic, Send } from "lucide-react";
@@ -8,32 +8,24 @@ import ChatMessage from "./ChatMessage";
 
 export const Chat = () => {
   const [messages, setMessages] = useState<Message[]>(chatmsgs);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [prompt, setPrompt] = useState("");
 
   const handleSendClick = async () => {
-    const prompt = textareaRef.current?.value.trim();
-    if (!prompt) return;
-
-    if (!textareaRef.current) {
-      console.error("Textarea ref not found");
-      return;
-    }
-
-    textareaRef.current.value = "";
-    textareaRef.current.style.height = "auto";
-
     setMessages((prevMessages) => [
       ...prevMessages,
-      { role: "user", message: prompt },
+      { role: "user", content: prompt },
     ]);
 
     try {
-      const response = await fetch("/pyapi/llm/o1", {
+      const response = await fetch("/pyapi/llm/4o", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ messages: messages }),
+        body: JSON.stringify({ messages: [
+            ...messages,
+            { role: "user", content: prompt },
+        ], tuned: true }),
       });
 
       if (!response.body) {
@@ -49,7 +41,7 @@ export const Chat = () => {
       // Append an empty message from the bot to the messages
       setMessages((prevMessages) => [
         ...prevMessages,
-        { role: "assistant", message: "" },
+        { role: "assistant", content: "" },
       ]);
 
       while (!done) {
@@ -65,7 +57,7 @@ export const Chat = () => {
           // Update the last message in messages
           setMessages((prevMessages) => {
             const updatedMessages = [...prevMessages];
-            updatedMessages[updatedMessages.length - 1].message = botMessage;
+            updatedMessages[updatedMessages.length - 1].content = botMessage;
             return updatedMessages;
           });
         }
@@ -78,7 +70,7 @@ export const Chat = () => {
         ...prevMessages,
         {
           role: "model",
-          message:
+          content:
             "I ran into an error with your request! Please try again later.",
         },
       ]);
@@ -99,17 +91,9 @@ export const Chat = () => {
 
         <div className="sticky bottom-0 mt-auto flex h-20 max-h-20 w-full flex-row rounded-b-lg border-t outline-[0.5px] outline-gray-400">
           <textarea
-            ref={textareaRef}
+            onChange={(e) => setPrompt(e.currentTarget.value)}
             className="h-full max-h-20 w-full resize-none overflow-y-scroll border-r-[0.5px] border-r-gray-400 p-2 outline-none"
             placeholder="What do you want to learn today?"
-            onInput={(e: any) => {
-              e.target.style.height = "auto";
-              if (e.target.scrollHeight <= 200) {
-                e.target.style.height = `${e.target.scrollHeight}px`;
-              } else {
-                e.target.style.height = `200px`;
-              }
-            }}
             style={{ overflowY: "auto" }}
           />
 
