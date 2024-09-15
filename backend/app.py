@@ -1,15 +1,20 @@
 ###############################################
 import os
+import io
 import json
 import openai
 import asyncio
+import zipfile
+import tempfile
 from pathlib import Path
 from dotenv import load_dotenv
 from stream_page import STREAM_PAGE
 from fastapi.middleware.cors import CORSMiddleware
 from oai_configs import O1_SYSTEM_PROMPT, GPT4O_SYSTEM_PROMPT
 from fastapi.responses import HTMLResponse, StreamingResponse
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, File, UploadFile, HTTPException
+
+from browserpy.sb3topy.src.sb3topy import api as tp_api
 ###############################################
 
 ###############################################
@@ -269,3 +274,118 @@ async def response_worker():
 async def ws_logger():
     print(app.active_cursors)
     return 'logged!'
+
+###############################################
+# Scratch transpiler
+###############################################
+from fastapi import APIRouter, File, UploadFile, HTTPException
+from fastapi.responses import StreamingResponse
+import io
+import tempfile
+import logging
+
+# Import necessary modules
+from browserpy.sb3topy.src.sb3topy import api as tp_api
+from browserpy.sb3topy.src.sb3topy.project import Manifest
+from browserpy.sb3topy.src.sb3topy.packer import save_code
+from browserpy.sb3topy.src.sb3topy.parser import parse_project
+from browserpy.sb3topy.src.sb3topy.unpacker import convert_assets
+
+router = APIRouter()
+logger = logging.getLogger(__name__)
+
+@app.post("/transpile")
+async def transpile_sb3_to_python(file: UploadFile = File(...)):
+    """
+    Endpoint to receive an sb3 file, transpile it, and return the transpiled project as a zip.
+    """
+    # Validate the uploaded file
+    if not (file.content_type == "application/octet-stream" or file.filename.endswith(".sb3")):
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload an sb3 file.")
+
+    try:
+        # Read the uploaded sb3 file into memory
+        file_bytes = await file.read()
+
+        # Create an in-memory file-like object from the bytes (for sb3)
+        sb3_file_stream = io.BytesIO(file_bytes)
+
+        # Open the sb3 file as a zip file
+        with zipfile.ZipFile(sb3_file_stream, 'r') as sb3_zip:
+            # Ensure project.json exists in the sb3 file
+            if "project.json" not in sb3_zip.namelist():
+                raise HTTPException(status_code=400, detail="Invalid sb3 project file (missing project.json).")
+
+            # Extract project.json and load it into a dictionary
+            with sb3_zip.open('project.json') as project_file:
+                project_json = json.load(project_file)
+
+            # Use a temporary directory for manifest operations
+            with tempfile.TemporaryDirectory() as temp_dir:
+                # Initialize the project manifest
+                manifest = Manifest(temp_dir)
+
+                # Create a Project object from the extracted project.json
+                project = tp_api.unpacker.Extract(manifest, sb3_zip).project
+
+                # Verify the project is valid
+                if not project.is_sb3():
+                    raise HTTPException(status_code=400, detail="Invalid or unsupported sb3 project format.")
+
+                # Convert project assets
+                convert_assets(manifest)
+
+                # Copy engine files
+                tp_api.packer.copy_engine(manifest)
+
+                # Parse the project code from the Project object
+                code = parse_project(project, manifest)
+
+                # Save the code into the manifest
+                save_code(manifest, code)
+
+                # Create an in-memory ZIP file to store the transpiled project
+                zip_buffer = io.BytesIO()
+
+                with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                    # Add the transpiled code as a single Python file (project.py)
+                    zip_file.writestr("project.py", code)
+
+                    # Add engine files to the ZIP file
+                    engine_dir = os.path.join(manifest.output_dir, "engine")
+                    for root, dirs, files in os.walk(engine_dir):
+                        # Skip '__pycache__' directories
+                        dirs[:] = [d for d in dirs if d != '__pycache__']
+                        
+                        for f in files:
+                            if '__pycache__' not in f:  # Ignore pycache files if needed
+                                file_path = os.path.join(root, f)
+                                zip_file.write(file_path, os.path.relpath(file_path, manifest.output_dir))
+
+                    # Add converted assets to the ZIP file
+                    assets_dir = os.path.join(manifest.output_dir, "assets")
+                    for root, dirs, files in os.walk(assets_dir):
+                        # Skip '__pycache__' directories
+                        dirs[:] = [d for d in dirs if d != '__pycache__']
+                        
+                        for f in files:
+                            if '__pycache__' not in f:  # Ignore pycache files if needed
+                                file_path = os.path.join(root, f)
+                                zip_file.write(file_path, os.path.relpath(file_path, manifest.output_dir))
+
+
+                zip_buffer.seek(0)  # Move the pointer to the beginning of the buffer
+
+        # Return the zip as a streaming response
+        return StreamingResponse(
+            zip_buffer,
+            media_type="application/zip",
+            headers={"Content-Disposition": "attachment; filename=transpiled_project.zip"}
+        )
+
+    except HTTPException as he:
+        # Re-raise HTTP exceptions
+        raise he
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
