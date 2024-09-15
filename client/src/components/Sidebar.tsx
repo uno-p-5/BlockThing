@@ -6,10 +6,9 @@ import { UserButton } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import {
   GamepadIcon,
-  Home,
   LayoutDashboardIcon,
-  LogOut,
   PencilIcon,
+  SearchIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -43,6 +42,14 @@ export function Sidebar() {
             className={cn(
               "m-auto",
               pathname === "/editor" ? "text-blue-500" : null
+            )}
+          />
+        </Link>
+        <Link href={"/search"}>
+          <SearchIcon
+            className={cn(
+              "m-auto",
+              pathname === "/search" ? "text-blue-500" : null
             )}
           />
         </Link>
