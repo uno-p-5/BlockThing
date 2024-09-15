@@ -67,7 +67,7 @@ async def test_page(request: Request):
 ###############################################
 @app.post("/llm/embedding")
 async def embedding_api(request: Request):
-    body = get_body(request)
+    body = await get_body(request)
 
     embedding = openai.embeddings.create(
         model="text-embedding-3-small",
@@ -83,7 +83,7 @@ async def embedding_api(request: Request):
 ###############################################
 @app.post("/llm/o1")
 async def llm_o1(request: Request):
-    body = get_body(request)
+    body = await get_body(request)
     
     messages = [{
         "role": "system",

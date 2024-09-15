@@ -49,7 +49,7 @@ export const Chat = () => {
       // Append an empty message from the bot to the messages
       setMessages((prevMessages) => [
         ...prevMessages,
-        { role: "model", message: "" },
+        { role: "assistant", message: "" },
       ]);
 
       while (!done) {
