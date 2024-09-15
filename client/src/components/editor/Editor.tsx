@@ -24,6 +24,7 @@ export function Editor({
   const blockMirrorRef = useRef<HTMLDivElement | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [editor, setEditor] = useState<Editor>();
+  const [editorHeight, setEditorHeight] = useState(window.innerHeight - 112);
 
   const handleChangeMode = (value: string) => {
     try {
@@ -46,17 +47,23 @@ export function Editor({
   };
 
   useEffect(() => {
+    const updateHeight = () => {
+      setEditorHeight(window.innerHeight - 112); // Adjust x value here
+    };
+
+    window.addEventListener("resize", updateHeight);
+
     const initializeBlockMirror = () => {
       if (blockMirrorRef.current && window.BlockMirror) {
         console.log("BlockMirror is available.");
         const configuration: EditorConfiguration = {
           container: blockMirrorRef.current,
-          height: "758",
+          height: editorHeight.toString(), // Use dynamically calculated height
           viewMode: "block",
         };
 
         const editorInstance = new window.BlockMirror(configuration);
-        setEditor(editorInstance); // Assign the editor instance to the state variable
+        setEditor(editorInstance);
       } else {
         console.log("BlockMirror not available yet.");
       }
@@ -69,8 +76,13 @@ export function Editor({
       }
     }, 100);
 
-    return () => clearInterval(intervalId);
-  }, []);
+    updateHeight();
+
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, [editorHeight]);
 
   return (
     <div className="flex-grow rounded-lg">
