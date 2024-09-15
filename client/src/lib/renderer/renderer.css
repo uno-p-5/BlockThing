@@ -1,0 +1,420 @@
+/* Import KaTeX styles */
+@import "katex/dist/katex.min.css";
+
+/* Base styles for markdown content */
+.markdown-body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  font-size: 1rem; /* Changed from 16px to 1rem for scalability */
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+/* Headings */
+.markdown-body h1 {
+  font-size: 2em;
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.3em;
+  margin-top: 1.5em;
+  margin-bottom: 1em;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.markdown-body h2 {
+  font-size: 1.75em;
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.3em;
+  margin-top: 1.4em;
+  margin-bottom: 0.9em;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.markdown-body h3 {
+  font-size: 1.5em;
+  margin-top: 1.3em;
+  margin-bottom: 0.8em;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/* Paragraphs and text */
+.markdown-body p {
+  margin-top: 0;
+  margin-bottom: 1em; /* Changed from 16px to 1em */
+}
+
+.markdown-body strong {
+  font-weight: 600;
+}
+
+/* Lists */
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 2em;
+  margin-top: 0;
+  margin-bottom: 1em; /* Changed from 16px to 1em */
+}
+
+.markdown-body li {
+  margin-bottom: 0.5em;
+}
+
+.markdown-body li:last-child {
+  margin-bottom: 0;
+}
+
+/* Inline code */
+.markdown-body code {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 0.85em;
+  background-color: rgba(27, 31, 35, 0.05);
+  border-radius: 3px;
+}
+
+/* Code blocks */
+.markdown-body pre {
+  padding: 1em; /* Changed from 16px to 1em */
+  overflow: auto;
+  font-size: 0.85em;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 3px;
+}
+
+/* Blockquotes */
+.markdown-body blockquote {
+  padding: 0 1em;
+  color: #000000;
+  
+  border-left: 0.25em solid #dfe2e5;
+  margin: 0 0 1em 0; /* Changed from 16px to 1em */
+}
+
+/* Parser styles */
+.parser {
+  --code-bg: #f5f5f5;
+  --code-color: #333;
+  --pre-bg: #ececec;
+  --pre-color: #333;
+
+  /* Light mode token colors */
+  --token-comment: #6a737d;
+  --token-punctuation: #444;
+  --token-property: #0366d6;
+  --token-tag: #22863a;
+  --token-boolean: #d73a49;
+  --token-number: #005cc5;
+  --token-constant: #005cc5;
+  --token-symbol: #e36209;
+  --token-deleted: #b31d28;
+  --token-selector: #e36209;
+  --token-attr-name: #6f42c1;
+  --token-string: #032f62;
+  --token-char: #032f62;
+  --token-builtin: #6f42c1;
+  --token-inserted: #22863a;
+  --token-operator: #d73a49;
+  --token-entity: #d73a49;
+  --token-url: #d73a49;
+  --token-atrule: #d73a49;
+  --token-attr-value: #005cc5;
+  --token-keyword: #d73a49;
+  --token-function: #6f42c1;
+  --token-class-name: #6f42c1;
+  --token-regex: #032f62;
+  --token-important: #032f62;
+  --token-variable: #d73a49;
+  --link: #0366d6;
+  --link-hover: #4d00c1;
+}
+
+.dark .parser {
+  --code-bg: #1e1e1e;
+  --code-color: #d4d4d4;
+  --pre-bg: #252526;
+  --pre-color: #d4d4d4;
+
+  /* Dark mode token colors */
+  --token-comment: slategray;
+  --token-punctuation: #999;
+  --token-property: #dcdcaa;
+  --token-tag: #dcdcaa;
+  --token-boolean: #569cd6;
+  --token-number: #b5cea8;
+  --token-constant: #b5cea8;
+  --token-symbol: #b5cea8;
+  --token-deleted: #b5cea8;
+  --token-selector: #d7ba7d;
+  --token-attr-name: #9cdcfe;
+  --token-string: #ce9178;
+  --token-char: #ce9178;
+  --token-builtin: #ce9178;
+  --token-inserted: #ce9178;
+  --token-operator: #d4d4d4;
+  --token-entity: #d4d4d4;
+  --token-url: #d4d4d4;
+  --token-atrule: #c586c0;
+  --token-attr-value: #c586c0;
+  --token-keyword: #569cd6;
+  --token-function: #dcdcaa;
+  --token-class-name: #4ec9b0;
+  --token-regex: #d16969;
+  --token-important: #d16969;
+  --token-variable: #d16969;
+  --link: #569cd6;
+  --link-hover: #4ec9b0;
+}
+
+/* Headings in parser */
+.parser h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.parser h2 {
+  font-size: 1.75em;
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.parser h3 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.parser h4,
+.parser h5,
+.parser h6 {
+  font-size: 1.25em;
+  font-weight: bold;
+  margin-top: 0.8em;
+  margin-bottom: 0.5em;
+}
+
+/* Links */
+.parser a {
+  color: var(--link);
+}
+
+.parser a:hover {
+  color: var(--link-hover);
+}
+
+/* Images */
+.parser img {
+  max-width: 100%; /* Ensures image doesn't exceed container */
+  height: auto;
+  margin-bottom: 1em;
+}
+
+/* Inline code */
+.parser code {
+  background-color: var(--code-bg);
+  border-radius: 5px;
+  padding: 0.3em 0.5em; /* Adjusted padding to relative units */
+  overflow-x: auto; /* Allows horizontal scroll if code is too long */
+  color: var(--pre-color);
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* Code blocks */
+.parser pre {
+  background-color: var(--code-bg);
+  padding: 1em; /* Changed from fixed to em units */
+  border-radius: 5px;
+  overflow: auto;
+  color: var(--pre-color);
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* Syntax highlighting */
+.parser .token.comment,
+.parser .token.prolog,
+.parser .token.doctype,
+.parser .token.cdata {
+  color: var(--token-comment);
+}
+
+.parser .token.punctuation {
+  color: var(--token-punctuation);
+}
+
+.parser .namespace {
+  opacity: 0.7;
+}
+
+.parser .token {
+  color: var(--code-color);
+}
+
+.parser .token.property,
+.parser .token.tag,
+.parser .token.boolean,
+.parser .token.number,
+.parser .token.constant,
+.parser .token.symbol,
+.parser .token.deleted {
+  color: var(--token-property);
+}
+
+.parser .text {
+  color: var(--pre-color);
+}
+
+.parser .token.selector,
+.parser .token.attr-name,
+.parser .token.string,
+.parser .token.char,
+.parser .token.builtin,
+.parser .token.inserted {
+  color: var(--token-selector);
+}
+
+.parser .token.operator,
+.parser .token.entity,
+.parser .token.url,
+.parser .language-css .token.string,
+.parser .style .token.string {
+  color: var(--token-operator);
+  background-color: var(--code-bg);
+}
+
+.parser .token.atrule,
+.parser .token.attr-value,
+.parser .token.keyword {
+  color: var(--token-atrule);
+}
+
+.parser .token.function,
+.parser .token.class-name {
+  color: var(--token-function);
+}
+
+.parser .token.regex,
+.parser .token.important,
+.parser .token.variable {
+  color: var(--token-regex);
+}
+
+.parser .token.important,
+.parser .token.bold {
+  font-weight: bold;
+}
+
+.parser .token.italic {
+  font-style: italic;
+}
+
+.parser .token.entity {
+  cursor: help;
+}
+
+.parser .token.plain-text {
+  color: var(--code-color);
+  background-color: var(--code-bg);
+}
+
+/* Lists */
+.parser ul,
+.parser ol {
+  margin-left: 1.5em;
+  padding-left: 0;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.parser li {
+  margin-bottom: 0.5em;
+}
+
+.parser li:last-child {
+  margin-bottom: 0;
+}
+
+/* Code block container */
+.parser .code-block {
+  position: relative;
+  margin: 1.1em 1em;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--code-bg);
+  color: var(--pre-color);
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* Code block header */
+.parser .code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--pre-bg);
+  padding: 0.5em 1em;
+  border-bottom: 1px solid var(--border);
+}
+
+.parser .language-id {
+  font-weight: bold;
+  font-size: 0.9em;
+  color: var(--pre-color);
+}
+
+/* Copy button */
+.copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+.parser .copy-btn:hover {
+  text-decoration: underline;
+  color: var(--muted);
+}
+
+/* LaTeX block styling */
+.latex-block {
+  position: relative;
+  margin: 1.1em 1em;
+  padding: 1em;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--pre-color);
+  overflow: auto;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.latex-block .katex {
+  font-size: 1.2em;
+}
+
+/* Blockquotes */
+.parser blockquote {
+  margin: 1em 0 1em 1em;
+  padding-left: 1em;
+  border-left: 5px solid var(--token-property);
+  background-color: var(--pre-bg);
+  padding: 0.5em 1em;
+  border-radius: 0 8px 8px 0;
+}
+
+.dark .parser blockquote {
+  border-left-color: var(--token-property);
+  background-color: var(--pre-bg);
+}

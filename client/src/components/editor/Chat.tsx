@@ -5,6 +5,7 @@ import { Mic, Send } from "lucide-react";
 
 import { Button } from "../ui/button";
 import ChatMessage from "./ChatMessage";
+import "./messages.css";
 
 export const Chat = () => {
   const [messages, setMessages] = useState<Message[]>(chatmsgs);
@@ -31,7 +32,7 @@ export const Chat = () => {
         body: JSON.stringify({ messages: [
             ...messages,
             { role: "user", content: prompt },
-        ], tuned: true }),
+        ], tuned: false }),
       });
 
       if (!response.body) {
