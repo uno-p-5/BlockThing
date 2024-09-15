@@ -9,8 +9,14 @@ import ChatMessage from "./ChatMessage";
 export const Chat = () => {
   const [messages, setMessages] = useState<Message[]>(chatmsgs);
   const [prompt, setPrompt] = useState("");
+  const [error, setError] = useState("");
 
   const handleSendClick = async () => {
+    if (!prompt) {
+        setError("Please enter a message!");
+        return;
+    }
+
     setMessages((prevMessages) => [
       ...prevMessages,
       { role: "user", content: prompt },
@@ -90,6 +96,7 @@ export const Chat = () => {
         </div>
 
         <div className="sticky bottom-0 mt-auto flex h-20 max-h-20 w-full flex-row rounded-b-lg border-t outline-[0.5px] outline-gray-400">
+        <p className="text-sm text-red-500 w-full absolute -top-6 left-2">{error}</p>
           <textarea
             onChange={(e) => setPrompt(e.currentTarget.value)}
             className="h-full max-h-20 w-full resize-none overflow-y-scroll border-r-[0.5px] border-r-gray-400 p-2 outline-none"
