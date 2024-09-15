@@ -100,7 +100,7 @@ export const Chat = () => {
         <p className="text-sm text-red-500 w-full absolute -top-6 left-2">{error}</p>
           <textarea
             onChange={(e) => setPrompt(e.currentTarget.value)}
-            className="h-full max-h-20 w-full resize-none overflow-y-scroll border-r-[0.5px] border-r-gray-400 p-2 outline-none"
+            className="h-full max-h-20 w-full rounded-b-lg rounded-r-none resize-none overflow-y-scroll border-r-[0.5px] border-r-gray-400 p-2 outline-none"
             placeholder="What do you want to learn today?"
             style={{ overflowY: "auto" }}
           />
