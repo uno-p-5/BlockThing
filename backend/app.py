@@ -3,6 +3,7 @@ import os
 import json
 import openai
 import asyncio
+from pathlib import Path
 from dotenv import load_dotenv
 from stream_page import STREAM_PAGE
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,6 +20,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 ###############################################
 # Initialize FastAPI app
 app = FastAPI()
+DATA = Path(__file__).parent.parent / 'data'
 
 @app.on_event("startup")
 def start():
@@ -116,7 +118,7 @@ async def test_page(request: Request):
 
 
 ###############################################
-# Embedding API (Placeholder)
+# Embedding API
 ###############################################
 @app.post("/llm/embedding")
 async def embedding_api(request: Request):
@@ -128,6 +130,19 @@ async def embedding_api(request: Request):
         encoding_format="float"
     )
     return { "embedding": embedding }
+
+
+
+###############################################
+# File Download Endpoint
+###############################################
+@app.post("/file/download")
+async def download_file(request: Request):
+    body = await get_body(request)
+    arr = bytearray(body["buf"])
+
+    with open(Path())
+
 
 
 
