@@ -5,6 +5,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 
 import { Sidebar } from "../../components/Sidebar";
+import Cursors from "@/components/Cursors";
 
 export default function RootLayout({
   children,

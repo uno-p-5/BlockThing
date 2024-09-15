@@ -1,14 +1,12 @@
-import { Cursor } from "./types";
-
 export class WebSocketService {
   private socket: WebSocket | undefined;
-  private onMessageCallback: ((cursors: Cursor[]) => void) | undefined;
+  private onMessageCallback: ((data: any) => void) | undefined;
   private url: string;
-//   private maxRetries = 3;
-//   private retryCount = 0;
+  private maxRetries = 3;
+  private retryCount = 0;
 
-  constructor() {
-    this.url = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080/ws/chat';
+  constructor(url: string) {
+    this.url = url;
     this.connect();
   }
 
@@ -36,54 +34,26 @@ export class WebSocketService {
   }
 
   private handleRetry() {
-    // if (this.retryCount < this.maxRetries) {
-    //   this.retryCount++;
-    //   console.log(`Retrying connection (${this.retryCount}/${this.maxRetries})...`);
-    console.log("Retrying connection...");
-    setTimeout(() => this.connect(), 1000);
-    // } else {
-    //   console.error('Max retries reached.');
-    //   window.open('/?error=wsdc', '_self')
-    // }
+    if (this.retryCount < this.maxRetries) {
+      this.retryCount++;
+      console.log(`Retrying connection (${this.retryCount}/${this.maxRetries})...`);
+      setTimeout(() => this.connect(), 1000);
+    } else {
+      console.error('Max retries reached.');
+    }
   }
 
-  sendMessage(userId: string, content: string) {
+  sendMessage(x: number, y: number, uuid: string) {
     this.socket?.send(JSON.stringify({ 
-      userId: userId,
-      content: content
+      x: x,
+      y: y,
+      uuid: uuid,
     }));
   }
-
-  // trust me ;)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  sendConfiguration(userId: string, config: string, payload?: any) {
-    console.log("Sending configuration", config, "with payload", payload);
-    this.socket?.send(JSON.stringify({
-      userId: userId,
-      config: config,
-      payload: payload || ""
-    }));
-  }
-
-  sendFile(userId: string, file: File) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target && e.target.result) {
-        const fileData = {
-          userId: userId,
-          name: file.name,
-          content: Array.from(new Uint8Array(e.target.result as ArrayBuffer)),
-        };
-        this.socket?.send(JSON.stringify(fileData));
-      }
-    };
-    reader.readAsArrayBuffer(file);
-  }
-
-  onMessage(callback: (cursors: Cursor[]) => void) {
+  onMessage(callback: (data: any) => void) {
     this.onMessageCallback = callback;
   }
 }
 
-const webSocketService = new WebSocketService();
+const webSocketService = new WebSocketService(`ws://127.0.0.1:8080/ws/cursor`);
 export default webSocketService;

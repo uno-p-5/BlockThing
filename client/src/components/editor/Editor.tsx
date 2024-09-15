@@ -16,7 +16,7 @@ declare global {
   }
 }
 
-export function Editor() {
+export default function Editor() {
   const blockMirrorRef = useRef<HTMLDivElement | null>(null);
   const hasCreatedBlockMirror = useRef(false);
   const [editor, setEditor] = useState<Editor>();
