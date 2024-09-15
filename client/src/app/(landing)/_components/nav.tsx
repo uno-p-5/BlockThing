@@ -5,6 +5,7 @@ import { SignInButton, SignUpButton } from "@clerk/clerk-react";
 import { UserButton } from "@clerk/nextjs";
 import { useConvexAuth } from "convex/react";
 import { GamepadIcon } from "lucide-react";
+import Link from "next/link";
 
 const Navbar = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -47,13 +48,13 @@ const Navbar = () => {
               </>
             )}
             {isAuthenticated && !isLoading && (
-              <div className="flex grid-cols-2 flex-row gap-x-4">
-                <a
+              <div className="my-auto flex flex-auto grid-cols-2 flex-row gap-x-4">
+                <Link
                   href="/dashboard"
                   className="pr-1"
                 >
-                  <Button>Get Started</Button>
-                </a>
+                  <Button className="h-9 min-h-0 py-1">Get Started</Button>
+                </Link>
                 <div className="rounded-full pr-2 pt-1">
                   <UserButton />
                 </div>

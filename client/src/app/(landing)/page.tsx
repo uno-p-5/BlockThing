@@ -1,6 +1,7 @@
 "use client";
 
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 
 import Navbar from "./_components/nav";
@@ -14,30 +15,43 @@ const LandingPage = () => {
     <div className="relative overflow-x-hidden bg-slate-50">
       <Navbar />
 
-      <ContainerScroll titleComponent={<TitleComponent />}>
+      <div>
+        <ContainerScroll titleComponent={<TitleComponent />}>
+          <Image
+            src={splash}
+            alt="splash of editor"
+            width={1200}
+            height={1135}
+          />
+        </ContainerScroll>
         <Image
-          src={splash}
-          alt="splash of editor"
-          width={1200}
-          height={1135}
+          src={bool_nan}
+          alt={"bool of NaN"}
+          className="absolute -right-20 top-40"
         />
-      </ContainerScroll>
+        <Image
+          src={my_func}
+          alt={"my func"}
+          className="absolute -left-32 top-80 rotate-12"
+        />
+        <Image
+          src={foobar}
+          alt={"if foo, 'bar"}
+          className="absolute -right-20 top-[36rem] -rotate-12"
+        />
+      </div>
 
-      <Image
-        src={bool_nan}
-        alt={"bool of NaN"}
-        className="absolute -right-20 top-40"
-      />
-      <Image
-        src={my_func}
-        alt={"my func"}
-        className="absolute -left-32 top-80 rotate-12"
-      />
-      <Image
-        src={foobar}
-        alt={"if foo, 'bar"}
-        className="absolute -right-20 top-[36rem] -rotate-12"
-      />
+      <div className="-mt-60 h-[100dvh] bg-[#2D2D2D] px-40 py-20 text-slate-50">
+        <p className="text-4xl font-semibold">
+          {"~"}43% of U.S. high schools{" "}
+          <span className="text-red-500 underline underline-offset-2">
+            lack
+          </span>{" "}
+          Computer Science courses
+        </p>
+
+        <p></p>
+      </div>
     </div>
   );
 };
@@ -49,15 +63,15 @@ const TitleComponent = () => {
     <div className="flex-center mb-16 flex-col space-y-4">
       <h1 className="text-8xl font-bold">Block Thing</h1>
 
-      <h2 className="text-medium w-[840px] text-4xl text-[#4B5563]">
-        <span className="underline underline-offset-4">Low-code</span> game
-        development studio built{" "}
+      <h2 className="text-medium w-[840px] text-4xl leading-[1.25] text-[#4B5563]">
+        A <span className="underline underline-offset-4">low-code</span> game
+        development studio built with the{" "}
         <span className="text-[#F8A935]">
-          with the fun of <b>Scratch</b>
+          <br /> fun of <b>Scratch</b>
         </span>
-        , and{" "}
+        , and the{" "}
         <span className="text-[#2463EB]">
-          the power of <b>AI</b>
+          capability of <b>OpenAI o1</b>
         </span>
       </h2>
     </div>
