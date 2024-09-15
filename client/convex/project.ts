@@ -115,3 +115,18 @@ export const update = mutation({
         return document; 
     }
 })
+
+
+export const getAllProjects = query({
+    args: {},
+    handler: async (ctx) => {
+        const userId = await ctx.auth.getUserIdentity();
+        if (!userId) {
+            throw new Error('Not Authenticated');
+        }
+
+        const projects = await ctx.db.query('project').collect()
+
+        return projects;
+    }
+});

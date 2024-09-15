@@ -9,6 +9,7 @@ import Link from "next/link";
 import { api } from "../../../convex/_generated/api";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 interface GameCardProps {
   game: Doc<"project">;
@@ -16,12 +17,13 @@ interface GameCardProps {
 
 export function GameCard({ game }: GameCardProps) {
   const deleteGame = useMutation(api.project.deleteProject);
+  const router = useRouter();
 
   const handleEdit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log("edit!");
+    router.push(`/editor/${game._id}`);
   };
 
   const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
