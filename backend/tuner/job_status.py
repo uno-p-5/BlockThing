@@ -10,7 +10,7 @@ load_dotenv(Path(__file__).parent.parent / '.env')
 client = OpenAI()
 client.api_key = getenv("OPENAI_API_KEY")
 
-JOB_ID = "ftjob-lRY2XUrxie8TXlyRlaN91556"
+JOB_ID = "ftjob-m1NEOlq4wSzXYrlpCeEr9HzM"
 
 # print(client.fine_tuning.jobs.list(limit=1))
 

@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from os import getenv
 
-dataset_path = Path(__file__).parent / 'dataset4.jsonl'
+dataset_path = Path(__file__).parent / 'datasets' / 'o1_dataset_train.jsonl'
 
 load_dotenv(Path(__file__).parent.parent / '.env')
 
@@ -12,5 +12,5 @@ client.api_key = getenv("OPENAI_API_KEY")
 
 print(client.files.create(
   file=open(dataset_path, "rb"),
-  purpose="fine-tune"
+  purpose="fine-tune",
 ))
