@@ -1,14 +1,14 @@
 import { MouseEvent } from "react";
 
 import { cn } from "@/lib/utils";
+import { useMutation } from "convex/react";
 import { PencilIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { api } from "../../../convex/_generated/api";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { Button } from "../ui/button";
-import { useMutation } from "convex/react";
-import { api } from "../../../convex/_generated/api";
 
 interface GameCardProps {
   game: Doc<"project">;
@@ -34,11 +34,11 @@ export function GameCard({ game }: GameCardProps) {
   return (
     <Link
       href={`/editor/${game?._id}`}
-      className="flex max-h-fit max-w-fit"
+      className="flex max-h-fit w-full min-w-fit"
     >
       <div
         className={cn(
-          "flex-center group relative h-40 w-80 min-w-80 flex-col space-y-1 overflow-hidden rounded-lg border-2 border-solid border-slate-950",
+          "flex-center group relative h-40 w-80 min-w-80 snap-start flex-col space-y-1 overflow-hidden rounded-lg border-2 border-solid border-slate-950",
           "transition-colors hover:border-0 hover:ring-[3px] hover:ring-slate-950"
         )}
       >

@@ -27,16 +27,18 @@ export default function Page() {
       <div className="space-y-2">
         <h2 className="text-2xl font-medium">Your Projects</h2>
 
-        <div className="flex w-fit flex-row space-x-4 overflow-scroll p-1">
+        <div className="flex flex-row space-x-4 p-1">
           <Create />
-          {(projects || []).map((game, idx) => {
-            return (
-              <GameCard
-                key={idx}
-                game={game}
-              />
-            );
-          })}
+          <div className="flex w-full max-w-full snap-x space-x-4 overflow-x-auto p-1">
+            {(projects || []).map((game) => {
+              return (
+                <GameCard
+                  key={game._id}
+                  game={game}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
