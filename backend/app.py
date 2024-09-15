@@ -141,8 +141,8 @@ async def download_file(request: Request):
     body = await get_body(request)
     arr = bytearray(body["buf"])
 
-    with open(Path())
-
+    with open(Path(DATA / f'{body["project_id"]}.sb3'), 'wb') as f:
+        f.write(arr)
 
 
 
