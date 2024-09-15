@@ -6,7 +6,7 @@ import "./globals.css";
 import { ConvexClientProvider } from "@/components/providers/auth-provider";
 import { EdgeStoreProvider } from "@/lib/edgestore";
 
-import { EditorScripts } from "./(sidebar-layout)/editor/EditorScripts";
+import { EditorScripts } from "../components/editor/EditorScripts";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

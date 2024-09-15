@@ -23,7 +23,6 @@ export function Editor({
 }) {
   const blockMirrorRef = useRef<HTMLDivElement | null>(null);
   const hasCreatedBlockMirror = useRef(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [editor, setEditor] = useState<Editor>();
   const [editorHeight, setEditorHeight] = useState(window.innerHeight - 112);
 
@@ -63,7 +62,7 @@ export function Editor({
         console.log("BlockMirror is available.");
         const configuration: EditorConfiguration = {
           container: blockMirrorRef.current,
-          height: editorHeight.toString(), // Use dynamically calculated height
+          height: editorHeight.toString(),
           viewMode: "block",
         };
 
@@ -91,7 +90,7 @@ export function Editor({
   }, [editorHeight]);
 
   return (
-    <div className="flex-grow rounded-lg">
+    <div className="w-full max-w-full flex-grow rounded-lg">
       <div className="space-y-2">
         <div className="flex flex-row space-x-4 align-middle">
           <Tabs
@@ -120,11 +119,13 @@ export function Editor({
         <div
           id="blockmirror-editor"
           ref={blockMirrorRef}
-          className={styles.active}
-          style={{ height: "100%" }}
+          className={`${styles.actvive} max-w-full`}
         />
+
         {!editor ? (
-          <Skeleton className="h-[500px] w-full animate-pulse rounded-md bg-slate-200" />
+          <Skeleton
+            className={`h-[${editorHeight}px] w-full animate-pulse rounded-md bg-slate-200`}
+          />
         ) : null}
       </div>
     </div>

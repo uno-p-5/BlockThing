@@ -14,12 +14,12 @@
 import { Chat } from "@/components/editor/Chat";
 import { Editor } from "@/components/editor/Editor";
 
-import styles from "./editor.module.css";
+import styles from "../../../components/editor/editor.module.css";
 
 export default function Page() {
   return (
     <div
-      className={`flex h-full min-h-full w-full flex-row justify-between space-x-8 bg-slate-50 px-8 py-8`}
+      className={`flex h-full min-h-full w-full max-w-full flex-row justify-between space-x-8 bg-slate-50 px-8 py-8`}
     >
       <Editor styles={styles} />
 

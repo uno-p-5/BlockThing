@@ -1,4 +1,3 @@
-import { Input } from "@/components/ui/input";
 import { Search } from "@/components/ui/search";
 import { pageStyle } from "@/styles/shared";
 
