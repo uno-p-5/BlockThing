@@ -5,14 +5,13 @@ export default defineSchema({
     project: defineTable({
         creator: v.string(),
         name: v.string(), 
-        shared_users: v.array(v.string()),
-        blocks: v.optional(v.any()),
+        // shared_users: v.array(v.string()),
         code: v.optional(v.string()),
         description: v.optional(v.string()),
         embedding: v.optional(v.array(v.float64())),
     })
     .index('byCreator', ['creator'])
-    .index('bySharedUsers', ['shared_users'])
+    // .index('bySharedUsers', ['shared_users'])
     .vectorIndex("by_embedding", {
         vectorField: "embedding",
         dimensions: 1536,

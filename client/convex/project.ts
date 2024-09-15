@@ -31,7 +31,6 @@ export const createProject = mutation({
             creator: userId.subject,
             name: args.name,
             description: args.description,
-            shared_users: [],
         });
         return proj;
     }
@@ -85,44 +84,31 @@ export const deleteProject = mutation({
         if (project.creator !== userId.subject) {
             throw new Error('You do not have permission to delete this project');
         }
-        
+
         await ctx.db.delete(args.projectId);
         return true;
     }
 });
 
 
-// export const update = internalMutation({
-//     args: {
-//         user_id: v.string(),
-//         email: v.string(),
-//         name: v.string(), 
-//         pfp_url: v.string(), 
+export const update = mutation({
+    args: {
+        project_id: v.string(),
+        name: v.optional(v.string()),
+        code: v.optional(v.string()),
+        description: v.optional(v.string()),
+        embedding: v.optional(v.array(v.float64())),
+    },
+    handler: async (ctx, args) => {
+        let existingDoc = await ctx.db.query("project")
+        .filter(q => q.eq(q.field("_id"), args.project_id))
+        .first();
 
-//     },
-//     handler: async (ctx, args) => {
-//         let existingDoc = await ctx.db.query("user")
-//         .filter(q => q.eq(q.field("user_id"), args.user_id))
-//         .first();
+        const { project_id, ...rest } = args; 
+        if(!existingDoc) { throw new Error("Project Not Found"); }
 
-//         const { user_id, ...rest } = args; 
+        const document = await ctx.db.patch(existingDoc._id, {...rest})
 
-//         if (!existingDoc) { 
-//             const newId = await createUser(ctx, {
-//                 user_id: user_id,
-//                 email: rest.email,
-//                 name: rest.name,
-//                 pfp_url: rest.pfp_url,
-//             })
-//             existingDoc = await ctx.db.query("user")
-//             .filter(q => q.eq(q.field("_id"), newId))
-//             .first();
-//          }
-
-//          if(!existingDoc) { throw new Error("User Not Found"); }
-
-//         const document = await ctx.db.patch(existingDoc._id, {...rest})
-
-//         return document; 
-//     }
-// })
+        return document; 
+    }
+})
