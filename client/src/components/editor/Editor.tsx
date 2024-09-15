@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
 import { gravityPlatformer } from "../../app/(sidebar-layout)/editor/test-data";
+import type { Editor, EditorConfiguration, ViewMode } from "./types";
 
 declare global {
   interface Window {
@@ -22,11 +23,13 @@ export function Editor({
 }) {
   const blockMirrorRef = useRef<HTMLDivElement | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [editor, setEditor] = useState<any>();
+  const [editor, setEditor] = useState<Editor>();
 
   const handleChangeMode = (value: string) => {
     try {
-      editor?.setMode(value);
+      if (["split", "block", "text"].includes(value)) {
+        editor?.setMode(value as ViewMode);
+      }
     } catch {
       // @ts-expect-error trust me bro
       console.error("mode change failed", e.message);
@@ -46,12 +49,13 @@ export function Editor({
     const initializeBlockMirror = () => {
       if (blockMirrorRef.current && window.BlockMirror) {
         console.log("BlockMirror is available.");
-        const configuration = {
+        const configuration: EditorConfiguration = {
           container: blockMirrorRef.current,
+          height: "758",
+          viewMode: "block",
         };
 
         const editorInstance = new window.BlockMirror(configuration);
-        editorInstance.setMode("block");
         setEditor(editorInstance); // Assign the editor instance to the state variable
       } else {
         console.log("BlockMirror not available yet.");
