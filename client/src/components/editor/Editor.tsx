@@ -22,6 +22,7 @@ export function Editor({
   styles: { readonly [key: string]: string };
 }) {
   const blockMirrorRef = useRef<HTMLDivElement | null>(null);
+  const hasCreatedBlockMirror = useRef(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [editor, setEditor] = useState<Editor>();
   const [editorHeight, setEditorHeight] = useState(window.innerHeight - 112);
@@ -54,7 +55,11 @@ export function Editor({
     window.addEventListener("resize", updateHeight);
 
     const initializeBlockMirror = () => {
-      if (blockMirrorRef.current && window.BlockMirror) {
+      if (
+        blockMirrorRef.current &&
+        window.BlockMirror &&
+        !hasCreatedBlockMirror.current
+      ) {
         console.log("BlockMirror is available.");
         const configuration: EditorConfiguration = {
           container: blockMirrorRef.current,
@@ -64,6 +69,7 @@ export function Editor({
 
         const editorInstance = new window.BlockMirror(configuration);
         setEditor(editorInstance);
+        hasCreatedBlockMirror.current = true;
       } else {
         console.log("BlockMirror not available yet.");
       }
