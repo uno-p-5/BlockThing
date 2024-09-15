@@ -21,6 +21,7 @@ import { pageStyle } from "@/styles/shared";
 
 import styles from "./editor.module.css";
 import { gravityPlatformer } from "./test-data";
+import Chatbox from "@/components/editor/Chat";
 
 declare global {
   interface Window {
@@ -80,45 +81,45 @@ export default function Page() {
   }, []);
 
   return (
-    <div className={pageStyle}>
-      <div className="space-y-2">
-        <div className="flex flex-row space-x-4 align-middle">
-          <Tabs
-            defaultValue="block"
-            className="w-fit"
-            onValueChange={handleChangeMode}
-          >
-            <TabsList>
-              <TabsTrigger value="block">Block</TabsTrigger>
-              <TabsTrigger value="text">Python</TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          <div className="my-auto pl-1">
-            <div
-              className={cn(
-                "h-3 w-3 rounded-full",
-                true
-                  ? "bg-green-500 ring-2 ring-green-500 ring-offset-2"
-                  : "bg-red-500 ring-2 ring-red-500 ring-offset-2"
-              )}
-            />
+    <div className={`${pageStyle} flex justify-between flex-row`}>
+      <div className="flex-grow rounded-lg">
+        <div className="space-y-2">
+          <div className="flex flex-row space-x-4 align-middle">
+            <Tabs
+              defaultValue="block"
+              className="w-fit"
+              onValueChange={handleChangeMode}
+            >
+              <TabsList>
+                <TabsTrigger value="block">Block</TabsTrigger>
+                <TabsTrigger value="text">Python</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <div className="my-auto pl-1">
+              <div
+                className={cn(
+                  "h-3 w-3 rounded-full",
+                  true
+                    ? "bg-green-500 ring-2 ring-green-500 ring-offset-2"
+                    : "bg-red-500 ring-2 ring-red-500 ring-offset-2"
+                )}
+              />
+            </div>
+            <Button onClick={handleInject}>Inject Code</Button>
           </div>
-
-          <Button onClick={handleInject}>Inject Code</Button>
+          <div
+            id="blockmirror-editor"
+            ref={blockMirrorRef}
+            className={styles.active}
+            style={{ height: "100%" }}
+          />
+          {!editor ? (
+            <Skeleton className="h-[500px] w-full animate-pulse rounded-md bg-slate-200" />
+          ) : null}
         </div>
-
-        <div
-          id="blockmirror-editor"
-          ref={blockMirrorRef}
-          className={styles.active}
-          style={{ height: "100%" }}
-        />
-
-        {!editor ? (
-          <Skeleton className="h-[500px] w-full animate-pulse rounded-md bg-slate-200" />
-        ) : null}
       </div>
+
+      <Chatbox />
     </div>
   );
 }
