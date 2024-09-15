@@ -43,7 +43,7 @@ const Navbar = () => {
                   signInForceRedirectUrl={"/dashboard"}
                   fallbackRedirectUrl={"/dashboard"}
                 >
-                  <Button>Get Started</Button>
+                  <Button className="h-9 min-h-0 py-1">Get Started</Button>
                 </SignUpButton>
               </>
             )}
@@ -53,7 +53,7 @@ const Navbar = () => {
                   href="/dashboard"
                   className="pr-1"
                 >
-                  <Button className="h-9 min-h-0 py-1">Get Started</Button>
+                  <Button className="h-9 min-h-0 py-1">Enter Block Thing</Button>
                 </Link>
                 <div className="rounded-full pr-2 pt-1">
                   <UserButton />

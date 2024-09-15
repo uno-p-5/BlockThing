@@ -35,14 +35,15 @@ const Cursors = () => {
       // Send message if the last message was sent more than `throttleDelay` ms ago
       if (currentTime - lastSentTime > throttleDelay) {
         lastSentTime = currentTime;
-        // webSocketService.sendMessage(clientX, clientY);
-        setCursor({ x: clientX, y: clientY });
+        webSocketService.sendMessage(clientX, clientY, uuid);
+        // setCursor({ x: clientX, y: clientY });
       }
     };
 
     window.addEventListener("mousemove", logCursorPosition);
 
     webSocketService.onMessage((json) => {
+      console.log('came back');
       console.log(json);
     });
 
@@ -51,16 +52,16 @@ const Cursors = () => {
     };
   }, []);
 
-  useEffect(() => {
-    // console.log(cursor);
-    webSocketService.sendMessage(cursor.x, cursor.y, uuid);
-  }, [cursor]);
+//   useEffect(() => {
+//     // console.log(cursor);
+//     webSocketService.sendMessage(cursor.x, cursor.y, uuid);
+//   }, [cursor]);
 
-  // useEffect(() => {
-  //     webSocketService.onMessage((json) => {
-  //         console.log(json);
-  //     });
-  // }, []);
+//   useEffect(() => {
+//       webSocketService.onMessage((json) => {
+//           console.log(json);
+//       });
+//   }, []);
 
   return (
     <div className="pointer-events-none absolute h-screen w-screen">

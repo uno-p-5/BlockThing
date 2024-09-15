@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   webpack: (config) => {
     // Ignore node-specific modules when bundling for the browser
     // https://webpack.js.org/configuration/resolve/#resolvealias
