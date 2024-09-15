@@ -76,7 +76,7 @@ export const Chat = ({
         body: JSON.stringify({ messages: [
             ...messages,
             { role: "user", content: msg },
-        ], tuned: false }),
+        ], tuned: true }),
       });
 
       setPrompt("");
