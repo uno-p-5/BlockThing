@@ -31,7 +31,7 @@ export function Create() {
 
   return (
     <div
-      className="flex max-h-fit max-w-fit hover:cursor-pointer"
+      className="flex max-h-fit max-w-fit py-2 hover:cursor-pointer"
       onMouseOver={handleMouseOver}
     >
       {hovered ? (

@@ -24,12 +24,12 @@ export default function Page() {
         Welcome back, {user?.name}
       </h1>
 
-      <div className="space-y-2">
+      <div className="space-y-0">
         <h2 className="text-2xl font-medium">Your Projects</h2>
 
-        <div className="flex flex-row space-x-4 p-1">
+        <div className="flex flex-row space-x-4 py-2">
           <Create />
-          <div className="flex w-full max-w-full space-x-4 overflow-x-auto p-1">
+          <div className="flex w-full max-w-full space-x-4 overflow-x-auto px-1 py-2">
             {(projects || []).map((game) => {
               return (
                 <GameCard
