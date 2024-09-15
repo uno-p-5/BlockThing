@@ -26,13 +26,11 @@ export function GameCardNoedit({ game }: GameCardProps) {
         )}
       >
         <Image
-          src={
-            "https://media.licdn.com/dms/image/v2/D5603AQHbJl0jTuO93g/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1679380417011?e=1731542400&v=beta&t=6vgXiJne6iVPNJz9sSN950MeFocWf4jMPCVnd2kYhm0"
-          }
-          alt="uno (="
+          src={`/images/games/img${Math.floor(Math.random() * 3) + 1}.png`}
+          alt="game"
           width={100}
           height={100}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover blur-sm"
         />
 
         <div
