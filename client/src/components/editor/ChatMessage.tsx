@@ -9,7 +9,7 @@ interface MessageParams {
 const ChatMessage = ({ message }: MessageParams) => {
   return (
     <div
-      className={`m-2 mb-2 flex w-2/3 rounded-lg p-2 px-3 ${message.role === "user" ? "ml-auto justify-end bg-blue-500 text-white" : "mr-auto bg-gray-200"}`}
+      className={`m-2 mb-2 flex w-2/3 rounded-lg p-2 px-3 ${message.role === "user" ? "ml-auto justify-end bg-blue-500 text-white" : "mr-auto bg-gray-200 w-[90%]"}`}
     >
       <div 
         className={`parser ${message.role === "user" && "dark"}`}

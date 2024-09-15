@@ -31,19 +31,6 @@ export const CreateNew = ({
   const addProj = useMutation(api.user.addProject);
   const router = useRouter();
 
-  const handleCreateNew = async () => {
-    try {
-      const res = await create_game({
-        name: "New Game",
-        description: "New Game",
-      });
-      await addProj({ project_id: res, shared: false });
-      router.push(`/editor/${res}`);
-    } catch (error) {
-      console.error("Error creating game:", error);
-    }
-  };
-
   const handlePromptChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPrompt(e.currentTarget.value);
   };
@@ -58,9 +45,17 @@ export const CreateNew = ({
     }
   };
 
-  const handleSubmitPrompt = () => {
-    console.log(`submitted: ${prompt}`);
-    setHovered(false);
+  const handleSubmitPrompt = async () => {
+    try {
+      const res = await create_game({
+        name: "New Game",
+        description: "New Game",
+      });
+      await addProj({ project_id: res, shared: false });
+      router.replace(`/editor/${res}?prompt=${encodeURIComponent(prompt)}`);
+    } catch (error) {
+      console.error("Error creating game:", error);
+    }
   };
 
   const transcriber = useTranscriber();

@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
-import { gravityPlatformer } from "../../app/(sidebar-layout)/editor/test-data";
+import { gravityPlatformer } from "../../app/(sidebar-layout)/editor/[projectId]/test-data";
 import type { Editor, EditorConfiguration, ViewMode } from "./types";
 
 declare global {

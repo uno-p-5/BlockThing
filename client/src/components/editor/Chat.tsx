@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useEffect, useState } from "react";
 
 import { Message } from "@/lib/types";
 import { Mic, Send } from "lucide-react";
@@ -7,20 +8,40 @@ import { Button } from "../ui/button";
 import ChatMessage from "./ChatMessage";
 import "./messages.css";
 
-export const Chat = () => {
+interface ChatParams {
+  initialPrompt?: string | null;
+  code: string;
+  setCode: (code: string) => void;
+}
+
+export const Chat = ({
+  initialPrompt,
+  code,
+  setCode,
+}: ChatParams) => {
   const [messages, setMessages] = useState<Message[]>(chatmsgs);
   const [prompt, setPrompt] = useState("");
   const [error, setError] = useState("");
 
-  const handleSendClick = async () => {
-    if (!prompt) {
+  useEffect(() => {
+    const initialize = async () => {
+      if (initialPrompt !== null && initialPrompt !== "") {
+        await handleSendClick(initialPrompt as string, true);
+      }
+    }
+    initialize();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSendClick = async (msg: string, init: boolean = false) => {
+    if (!prompt && !init) {
         setError("Please enter a message!");
         return;
     }
 
     setMessages((prevMessages) => [
       ...prevMessages,
-      { role: "user", content: prompt },
+      { role: "user", content: msg },
     ]);
 
     try {
@@ -31,9 +52,11 @@ export const Chat = () => {
         },
         body: JSON.stringify({ messages: [
             ...messages,
-            { role: "user", content: prompt },
+            { role: "user", content: msg },
         ], tuned: false }),
       });
+
+      setPrompt("");
 
       if (!response.body) {
         console.error("No response body");
@@ -57,7 +80,7 @@ export const Chat = () => {
 
         if (value) {
           const chunk = decoder.decode(value, { stream: true });
-          console.log("Chunk received:", chunk);
+          // console.log("Chunk received:", chunk);
 
           botMessage += chunk;
 
@@ -70,7 +93,7 @@ export const Chat = () => {
         }
       }
 
-      console.log("Streaming complete");
+      // console.log("Streaming complete");
     } catch (error) {
       console.error("Error fetching and streaming:", error);
       setMessages((prevMessages) => [
@@ -100,6 +123,7 @@ export const Chat = () => {
         <p className="text-sm text-red-500 w-full absolute -top-6 left-2">{error}</p>
           <textarea
             onChange={(e) => setPrompt(e.currentTarget.value)}
+            value={prompt}
             className="h-full max-h-20 w-full rounded-b-lg rounded-r-none resize-none overflow-y-scroll border-r-[0.5px] border-r-gray-400 p-2 outline-none"
             placeholder="What do you want to learn today?"
             style={{ overflowY: "auto" }}
@@ -109,7 +133,8 @@ export const Chat = () => {
             <Button
               className="rounded-lg p-1"
               variant="link"
-              onClick={handleSendClick}
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              onClick={(e) => handleSendClick(prompt)}
             >
               <Send className="h-6 w-6" />
             </Button>
