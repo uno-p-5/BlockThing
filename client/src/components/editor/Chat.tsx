@@ -97,10 +97,10 @@ export const Chat = () => {
           ))}
         </div>
 
-        <div className="sticky bottom-0 flex max-h-[200px] min-h-[80px] w-full flex-row rounded-b-lg border-t outline-[0.5px] outline-gray-400">
+        <div className="sticky bottom-0 mt-auto flex h-20 max-h-20 w-full flex-row rounded-b-lg border-t outline-[0.5px] outline-gray-400">
           <textarea
             ref={textareaRef}
-            className="h-full max-h-[80px] w-full resize-none overflow-y-scroll border-r-[0.5px] border-r-gray-400 p-2 outline-none"
+            className="h-full max-h-20 w-full resize-none overflow-y-scroll border-r-[0.5px] border-r-gray-400 p-2 outline-none"
             placeholder="What do you want to learn today?"
             onInput={(e: any) => {
               e.target.style.height = "auto";
