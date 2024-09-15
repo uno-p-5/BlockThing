@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SignInButton, SignUpButton } from "@clerk/clerk-react";
 import { UserButton } from "@clerk/nextjs";
 import { useConvexAuth } from "convex/react";
+import { GamepadIcon } from "lucide-react";
 
 const Navbar = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -11,7 +12,10 @@ const Navbar = () => {
   return (
     <nav className="absolute z-10 my-auto h-14 w-full border-b-2 border-slate-200 px-4 pt-2">
       <div className="flex flex-row items-center justify-between">
-        <h1 className="font-bold">Block App</h1>
+        <div className="my-auto flex space-x-2 align-middle">
+          <GamepadIcon className="size-8 rounded-full bg-blue-600 p-1 text-slate-50" />
+          <h6 className="my-auto h-fit text-lg font-bold">Block Thing</h6>
+        </div>
         <div>
           <div className="flex w-full items-center justify-between gap-x-4">
             {isLoading && <div>Loading</div>}
