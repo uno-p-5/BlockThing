@@ -1,10 +1,12 @@
-import { Mic, Send } from "lucide-react";
-import ChatMessage from "./ChatMessage";
-import { Button } from "../ui/button";
-import { useState, useRef } from "react";
-import { Message } from "@/lib/types";
+import { useRef, useState } from "react";
 
-const Chatbox = () => {
+import { Message } from "@/lib/types";
+import { Mic, Send } from "lucide-react";
+
+import { Button } from "../ui/button";
+import ChatMessage from "./ChatMessage";
+
+export const Chat = () => {
   const [messages, setMessages] = useState<Message[]>(chatmsgs);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -74,21 +76,31 @@ const Chatbox = () => {
       console.error("Error fetching and streaming:", error);
       setMessages((prevMessages) => [
         ...prevMessages,
-        { role: "model", message: "I ran into an error with your request! Please try again later." },
+        {
+          role: "model",
+          message:
+            "I ran into an error with your request! Please try again later.",
+        },
       ]);
     }
   };
 
   return (
-    <div className="max-h-[80vh] w-[400px] py-[48px] pl-4 pr-1">
-      <div className="relative flex flex-col gap-x-2 rounded-lg h-full outline outline-[0.5px] outline-gray-300 overflow-y-auto">
-        {messages.map((msg, idx) => (
-            <ChatMessage key={idx} message={msg} />
-        ))}
-        <div className="absolute flex flex-row outline outline-[0.5px] outline-gray-400 bottom-0 w-full min-h-[60px] max-h-[200px] rounded-b-lg">
+    <div className="max-h-full w-[400px] pt-12">
+      <div className="relative flex h-full flex-col gap-x-2 rounded-lg outline outline-[0.5px] outline-gray-300">
+        <div className="overflow-y-auto">
+          {messages.map((msg, idx) => (
+            <ChatMessage
+              key={idx}
+              message={msg}
+            />
+          ))}
+        </div>
+
+        <div className="sticky bottom-0 flex max-h-[200px] min-h-[80px] w-full flex-row rounded-b-lg border-t outline-[0.5px] outline-gray-400">
           <textarea
             ref={textareaRef}
-            className="w-full h-full p-2 resize-none outline-none min-h-[60px] max-h-[200px] border-r-[0.5px] border-r-gray-400"
+            className="h-full max-h-[80px] w-full resize-none overflow-y-scroll border-r-[0.5px] border-r-gray-400 p-2 outline-none"
             placeholder="What do you want to learn today?"
             onInput={(e: any) => {
               e.target.style.height = "auto";
@@ -100,6 +112,7 @@ const Chatbox = () => {
             }}
             style={{ overflowY: "auto" }}
           />
+
           <div className="flex flex-col gap-y-1 p-1">
             <Button
               className="rounded-lg p-1"
@@ -108,7 +121,10 @@ const Chatbox = () => {
             >
               <Send className="h-6 w-6" />
             </Button>
-            <Button className="p-1 rounded-lg" variant="link">
+            <Button
+              className="rounded-lg p-1"
+              variant="link"
+            >
               <Mic className="h-6 w-6" />
             </Button>
           </div>
@@ -127,6 +143,68 @@ const chatmsgs = [
     role: "model",
     message: "Doing great! How about you?",
   },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
+  {
+    role: "model",
+    message: "Doing great! How about you?",
+  },
 ];
-
-export default Chatbox;
