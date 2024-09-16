@@ -30,7 +30,5 @@
 <br>
 
 <p align="center">
-    <a href="EXAMPLE LINK">
-        <img width="1728" alt="Splash" src="https://github.com/KevinWu098/kTemp/assets/100006999/b477ecea-3c48-4d75-9eb0-33c682761c7a">
-    </a>
+        <img width="1728" alt="Block Thing Landing Splash" src="https://github.com/user-attachments/assets/59ef7549-2724-4e91-a88d-eeb7a6e6be25">
 </p>
