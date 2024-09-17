@@ -1,6 +1,6 @@
 # Block Thing 👾
 
-> ### A low-code game development studio built with the fun of Scratch, and the power of OpenAI o1.
+> ### Training wheels for programming: a low-code game development studio built with the fun of Scratch, and the power of OpenAI o1.
 
 <p align="left">
   Frontend built with: <br>
