@@ -78,8 +78,7 @@ export default function Editor({ code, setCode, projectId }: EditorProps) {
         editor?.setMode(value as ViewMode);
       }
     } catch {
-      // @ts-expect-error trust me bro
-      console.error("mode change failed", e.message);
+      // console.error("mode change failed", e.message);
     }
   };
 
@@ -87,7 +86,7 @@ export default function Editor({ code, setCode, projectId }: EditorProps) {
     if (editor?.getCode()) {
       updateProject({
         project_id: projId,
-        code: editor.getCode(),
+        code: code,
       });
     }
     setSaveMsg(
@@ -241,7 +240,7 @@ export default function Editor({ code, setCode, projectId }: EditorProps) {
               <TabsTrigger value="text">Python</TabsTrigger>
             </TabsList>
           </Tabs>
-          <Button className="h-9 min-h-0 py-1"><Play className="h-4 w-4 mr-2" />Run Code</Button>
+          {/* <Button className="h-9 min-h-0 py-1"><Play className="h-4 w-4 mr-2" />Run Code</Button> */}
           <Button onClick={handleSave} className="h-9 min-h-0 py-1">{saveMsg}</Button>
         </div>
 

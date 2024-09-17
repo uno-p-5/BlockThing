@@ -135,7 +135,7 @@ export const Chat = ({
             chat_history: [
               ...messages,
               { role: "user", content: msg },
-              { role: "model", content: botMessage },
+              { role: "assistant", content: botMessage },
             ],
           }).then((_) => {
             router.replace(`/editor/${projId}`);
@@ -173,7 +173,7 @@ export const Chat = ({
               chat_history: [
                 ...messages,
                 { role: "user", content: msg },
-                { role: "model", content: botMessage },
+                { role: "assistant", content: botMessage },
               ],
             }).then((_) => {
               router.replace(`/editor/${projId}`);
@@ -188,7 +188,7 @@ export const Chat = ({
       setMessages((prevMessages) => [
         ...prevMessages,
         {
-          role: "model",
+          role: "assistant",
           content:
             "I ran into an error with your request! Please try again later.",
         },
